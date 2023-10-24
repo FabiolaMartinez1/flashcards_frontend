@@ -1,14 +1,28 @@
-# flashcards
+# Proyecto de Ingeniería de Software - Frontend
 
-## Project setup
-```
-npm install
-```
+Este repositorio contiene el código del frontend de una aplicación web para el estudio mediante flashcards con IA. Este proyecto forma parte de un proyecto de ingeniería de software.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Instalación
+
+Para instalar y ejecutar este proyecto, sigue los siguientes pasos:
+
+1. Clona este repositorio en tu máquina local.
+2. Abre una terminal en la carpeta del proyecto.
+3. Ejecuta el siguiente comando para instalar las dependencias:
+
+    ```
+    npm install
+    ```
+
+4. Ejecuta el siguiente comando para iniciar la aplicación:
+
+    ```
+    npm run serve
+    ```
+
+5. Abre un navegador web y accede a la dirección http://localhost:8080 para ver la aplicación en funcionamiento.
+
+## Extra
 
 ### Compiles and minifies for production
 ```
