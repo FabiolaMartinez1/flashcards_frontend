@@ -1,13 +1,13 @@
 <template>
     <div>
-        <Home />
+        <TopicCards />
     </div>
 </template>
 <script>
-import Home from '../components/HomePage.vue';
+import TopicCards from '../components/TopicCards.vue';
 export default {
     components: {
-        Home
+        TopicCards
     }
 };
 

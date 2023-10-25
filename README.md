@@ -14,13 +14,25 @@ Para instalar y ejecutar este proyecto, sigue los siguientes pasos:
     npm install
     ```
 
-4. Ejecuta el siguiente comando para iniciar la aplicación:
+4. Instala las ependencias necesarias:
+    ```
+    npm install axios
+
+    npm install vue-router
+
+    npm install sweetalert2
+
+    npm install vuex
+
+    ```
+
+5. Ejecuta el siguiente comando para iniciar la aplicación:
 
     ```
     npm run serve
     ```
 
-5. Abre un navegador web y accede a la dirección http://localhost:8080 para ver la aplicación en funcionamiento.
+6. Abre un navegador web y accede a la dirección http://localhost:8080 para ver la aplicación en funcionamiento.
 
 ## Extra
 
