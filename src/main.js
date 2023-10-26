@@ -15,7 +15,8 @@ app.use(
     domain: "dev-qtw16en7kwogaxhe.us.auth0.com",
     clientId: "dj3A5bhYH4bo0uoXeVngLr7ffOaPn06g",
     authorizationParams: {
-        redirect_uri: window.location.origin
+        redirect_uri: window.location.origin,
+        audience: "http://localhost:8081/api/v1/login"
     }
     })
 );

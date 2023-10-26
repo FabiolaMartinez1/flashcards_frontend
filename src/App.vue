@@ -14,22 +14,21 @@
         </div>
         <div class="navbar-nav me-4">
             <!-- <router-link to="/login" class="btn btn-outline-light me-4">Login</router-link> -->
-            <!-- <button class="btn btn-outline-light" @click="login">Log in</button> -->
-            <div v-if="isLoading">Loading ...</div>
-            <div v-else>
-              <button class="btn btn-outline-light"  @click="login">Log in</button>
-              <pre v-if="isAuthenticated">
-                  <code>{{ user }}</code>
-                  <code>{{ user.name }}</code>
-                </pre>
-            </div>
-            <div>
-              <button class="btn btn-outline-light" @click="logout">Log out</button>
-            </div>
+            <button class="btn btn-outline-light" @click="login">Log in</button>
+            <button class="btn btn-outline-light" @click="logout">Log out</button>
         </div>
       </div>
     </div>
   </nav>
+  <div v-if="isLoading">Loading ...</div>
+            <div v-else>
+              <pre v-if="isAuthenticated">
+                  <code>{{ user }}</code>
+                  <code>{{ user.name }}</code>
+                  
+              <button class="btn btn-outline-light"  @click="doSomethingWithToken">Ver token</button>
+                </pre>
+            </div>
   <div>
     <router-view></router-view>
   </div>
@@ -59,15 +58,20 @@
 //     };
 //   }
 // };
-
+import LoginService from './service/LoginService.js'
+// flashcards\src\service\LoginService.js
 // Options API
 export default {
   data: function (){
       return {
+        token: null,
         user: this.$auth0.user,
         isAuthenticated: this.$auth0.isAuthenticated,
         isLoading: this.$auth0.isLoading,
       };
+    },
+    created(){
+      this.loginService = new LoginService();
     },
   methods: {
     login() {
@@ -83,6 +87,22 @@ export default {
           } 
         });
       },
+      async doSomethingWithToken() {
+        this.token = await this.$auth0.getAccessTokenSilently();
+        console.log(this.token);
+        await this.loginService.doSomethingWithToken(this.token);
+      },
+    //   async doSomethingWithToken() {
+    //   const { getAccessTokenSilently } = useAuth0();
+    //   const token = await getAccessTokenSilently();
+    //   const response = await fetch('https://api.example.com/posts', {
+    //     headers: {
+    //       Authorization: 'Bearer ' + token
+    //     }
+    //   });
+    //   const data = await response.json();
+    //   console.log(data);
+    // }
   }
 };
 </script>
