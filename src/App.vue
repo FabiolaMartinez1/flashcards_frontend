@@ -13,9 +13,15 @@
           <router-link to="/contact" class="nav-link me-4">Contact</router-link>
         </div>
         <div class="navbar-nav me-4">
-            <!-- <router-link to="/login" class="btn btn-outline-light me-4">Login</router-link> -->
-            <button class="btn btn-outline-light" @click="login">Log in</button>
-            <button class="btn btn-outline-light" @click="logout">Log out</button>
+            <div v-if="isAuthenticated">
+              <button class="btn btn-outline-light" @click="logout">Log out</button>
+            </div>
+            <div v-else>
+              <button class="btn btn-outline-light" @click="login">Log in</button>
+            </div>
+
+            <!-- <button class="btn btn-outline-light" @click="login">Log in</button>
+            <button class="btn btn-outline-light" @click="logout">Log out</button> -->
         </div>
       </div>
     </div>
@@ -35,32 +41,7 @@
 </template>
 
 <script>
-// Composition API
-// import { useAuth0 } from '@auth0/auth0-vue';
-
-// export default {
-//   setup() {
-//     const auth0 = useAuth0();
-    
-//       return {
-//         login: () => auth0.loginWithRedirect(),
-//         user: auth0.user,
-//         isAuthenticated: auth0.isAuthenticated,
-//         isLoading: auth0.isLoading,
-      
-//       logout() {
-//           auth0.logout({ 
-//             logoutParams: { 
-//               returnTo: window.location.origin 
-//             } 
-//           });
-//         }
-//     };
-//   }
-// };
 import LoginService from './service/LoginService.js'
-// flashcards\src\service\LoginService.js
-// Options API
 export default {
   data: function (){
       return {
@@ -92,17 +73,6 @@ export default {
         console.log(this.token);
         await this.loginService.doSomethingWithToken(this.token);
       },
-    //   async doSomethingWithToken() {
-    //   const { getAccessTokenSilently } = useAuth0();
-    //   const token = await getAccessTokenSilently();
-    //   const response = await fetch('https://api.example.com/posts', {
-    //     headers: {
-    //       Authorization: 'Bearer ' + token
-    //     }
-    //   });
-    //   const data = await response.json();
-    //   console.log(data);
-    // }
   }
 };
 </script>
