@@ -23,4 +23,3 @@ app.use(
 
 app.mount('#app');
 
-// createApp(App).mount('#app')
