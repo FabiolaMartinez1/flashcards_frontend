@@ -12,9 +12,20 @@
           <router-link to="/about" class="nav-link me-4">About</router-link>
           <router-link to="/contact" class="nav-link me-4">Contact</router-link>
         </div>
-        <div class="navbar-nav">
-            <router-link to="/login" class="btn btn-outline-light me-4">Login</router-link>
-            <router-link to="/signup" class="btn btn-outline-light me-4">Sign Up</router-link>
+        <div class="navbar-nav me-4">
+            <!-- <router-link to="/login" class="btn btn-outline-light me-4">Login</router-link> -->
+            <!-- <button class="btn btn-outline-light" @click="login">Log in</button> -->
+            <div v-if="isLoading">Loading ...</div>
+            <div v-else>
+              <button class="btn btn-outline-light"  @click="login">Log in</button>
+              <pre v-if="isAuthenticated">
+                  <code>{{ user }}</code>
+                  <code>{{ user.name }}</code>
+                </pre>
+            </div>
+            <div>
+              <button class="btn btn-outline-light" @click="logout">Log out</button>
+            </div>
         </div>
       </div>
     </div>
@@ -25,14 +36,55 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+// Composition API
+// import { useAuth0 } from '@auth0/auth0-vue';
 
+// export default {
+//   setup() {
+//     const auth0 = useAuth0();
+    
+//       return {
+//         login: () => auth0.loginWithRedirect(),
+//         user: auth0.user,
+//         isAuthenticated: auth0.isAuthenticated,
+//         isLoading: auth0.isLoading,
+      
+//       logout() {
+//           auth0.logout({ 
+//             logoutParams: { 
+//               returnTo: window.location.origin 
+//             } 
+//           });
+//         }
+//     };
+//   }
+// };
+
+// Options API
 export default {
-  name: 'App',
-  // components: {
-  //   HelloWorld
-  // }
-}
+  data: function (){
+      return {
+        user: this.$auth0.user,
+        isAuthenticated: this.$auth0.isAuthenticated,
+        isLoading: this.$auth0.isLoading,
+      };
+    },
+  methods: {
+    login() {
+      this.$auth0.loginWithRedirect();
+      //imprimir token
+      console.log(this.$auth0.getTokenSilently());
+      
+    },
+    logout() {
+        this.$auth0.logout({ 
+          logoutParams: { 
+            returnTo: window.location.origin 
+          } 
+        });
+      },
+  }
+};
 </script>
 
 <style>

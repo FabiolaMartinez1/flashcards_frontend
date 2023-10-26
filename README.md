@@ -24,6 +24,8 @@ Para instalar y ejecutar este proyecto, sigue los siguientes pasos:
 
     npm install vuex
 
+    npm install @auth0/auth0-vue
+
     ```
 
 5. Ejecuta el siguiente comando para iniciar la aplicación:
