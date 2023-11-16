@@ -25,23 +25,26 @@
               <div class="card-body">
                 <!-- Contenedor para título y botón de menú -->
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <h5 class="card-title">{{ tema.titulo }}</h5>
+                  <h5 class="card-title">{{ tema.title }}</h5>
                   <div class="dropdown">
-                    <button class="btn btn-sm btn-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="bi bi-three-dots-vertical"></i>
+                    <button class="btn btn-sm btn-transparent" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-three-dots-vertical fs-5"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                      <li><a class="dropdown-item" href="#" @click.prevent="eliminar(tema.id)">Eliminar</a></li>
-                      <li><a class="dropdown-item" href="#" @click.prevent="verDetalles(tema.id)">Ver detalles</a></li>
-                      <li><a class="dropdown-item" href="#" @click.prevent="compartir(tema.id)">Compartir</a></li>
+                      <li><a class="dropdown-item" href="#" @click.prevent="deleteTopic(tema.topicId)">Eliminar</a></li>
+                      <li><a class="dropdown-item" href="#" @click.prevent="verDetalles(tema.topicId)">Ver detalles</a></li>
+                      <li><a class="dropdown-item" href="#" @click.prevent="compartir(tema.topicId)">Compartir</a></li>
                     </ul>
                   </div>
                 </div>
                 <!-- Descripción -->
-                <p class="d-flex card-text">{{ tema.descripcion }}</p>
+                <!-- <p class="d-flex card-text">{{ tema.description }}</p> -->
+                <p class="d-flex card-text">{{ tema.description.substring(0, 35) + '...' }}</p>
+
                 <!-- Contenedor para cantidad de tarjetas e íconos -->
                 <div class="d-flex justify-content-between align-items-center">
-                  <small class="text-muted">{{ tema.cantidad }} cards</small>
+                  <!-- <small class="text-muted">{{ tema.cantidad }} cards</small> -->
+                  <small class="text-muted">15 cards</small>
                   <div class="d-flex">
                     <i class="bi bi-tags-fill me-2 fs-5" v-b-tooltip.hover title="Etiquetas" @click="mostrarPopupEtiquetas(tema)"></i>
 
@@ -63,7 +66,9 @@
   
   <script>
   // import TopicForm from '../components/TopicForm.vue';
+  // import TopicService from '@/service/TopicService';
   import TopicForm from './TopicForm.vue';
+  import TopicService from '../service/TopicService.js';
 
   export default {
     components: {
@@ -72,46 +77,77 @@
     data() {
       return {
         temas: [
-        // Supongamos que tienes un array de objetos para cada tarjeta
-        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFD1DC' },
-        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#A8E6CF' },
-        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#A7C7E7' },
-        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFF0AC' },
-        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#92E6E6' },
-        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#B5AED4' },
-        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFD1DC' },
-        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#FFAD88' },
-        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#E4FFD0' },
-        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FF9190' },
-        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#CFCFC4' },
-        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#FFFFFF' },
+        // // Supongamos que tienes un array de objetos para cada tarjeta
+        // { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFD1DC' },
+        // { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#A8E6CF' },
+        // { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#A7C7E7' },
+        // { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFF0AC' },
+        // { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#92E6E6' },
+        // { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#B5AED4' },
+        // { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFD1DC' },
+        // { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#FFAD88' },
+        // { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#E4FFD0' },
+        // { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FF9190' },
+        // { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#CFCFC4' },
+        // { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#FFFFFF' },
         
-        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#A7C7E7' },
-        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFF0AC' },
-        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#92E6E6' },
-        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#B5AED4' },
-        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFD1DC' },
-        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#FFAD88' },
-        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#E4FFD0' },
-        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FF9190' },
-        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#CFCFC4' },
+        // { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#A7C7E7' },
+        // { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFF0AC' },
+        // { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#92E6E6' },
+        // { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#B5AED4' },
+        // { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFD1DC' },
+        // { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#FFAD88' },
+        // { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#E4FFD0' },
+        // { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FF9190' },
+        // { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#CFCFC4' },
         // ... más tarjetas
       ],
         etiquetas: ['Etiqueta 1', 'Etiqueta 2', 'Etiqueta 3'], // Añade aquí tus etiquetas
         etiquetaSeleccionada: ''
       };
     },
-    // mounted() {
-    //   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-    //   const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-    // },
+    created(){
+        this.topicService = new TopicService();
+    },
+    async mounted(){
+        // const userId = this.$store.getters['getUserId'];
+        // console.log("ID del usuario reconocido en task : " + userId);
+            // try {
+            //   this.topicService.getTopics().then((data) => {
+            //         this.temas = data;
+            //         console.log(this.temas);
+            //     });
+            // } catch (error) {
+            //     console.error(error);
+            // }
+            this.getTopics();
+    },
     methods: {
+      getTopics() {
+        try {
+              this.topicService.getTopics().then((data) => {
+                    this.temas = data;
+                    console.log(this.temas);
+                });
+            } catch (error) {
+                console.error(error);
+            }
+      },
       agregarTema() {
         // Lógica para agregar ,un nuevo tema
       },
-      eliminar(id) {
-        console.log(id);
-        // Llama al endpoint para eliminar el tema
+      deleteTopic(topicId) {
+        console.log(topicId);
+        try {
+              this.topicService.deleteTopic(topicId).then((data) => {
+                    console.log(data);
+                    console.log("Tema borrada");
+                    this.getTopics();
+                });
+                
+            } catch (error) {
+                console.error(error);
+            }
       },
       verDetalles(id) {
         // Redirige a la página de detalles
