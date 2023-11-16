@@ -1,24 +1,29 @@
 
 import { createRouter, createWebHistory } from 'vue-router';
-// import HomeView from '../view/HomeView.vue';
+import HomeView from '../view/HomeView.vue';
+import TopicView from '../view/TopicView.vue';
 
 const routes = [
     {
         path: '/',
         name: 'Home',
-        // component: HomeView
-        component: () => import('../view/HomeView.vue')
+        component: HomeView
     },
     {
-        path: '/topic',
+        path: '/topics',
         name: 'Topics',
-        component: () => import('../view/TopicView.vue')
+        component: TopicView
     },
-    // {
-    //     path: '/topic/:id',
-    //     name: 'TopicDetail',
-    //     component: () => import('../view/TopicDetailView.vue')
-    // },
+    {
+        path: '/topics/favorite',
+        name: 'TopicsFavorite',
+        component: TopicView
+    },
+    {
+        path: '/topics/shared',
+        name: 'TopicsShared',
+        component: TopicView
+    },
 ];
 
 const router = createRouter({

@@ -1,54 +1,154 @@
 <template>
-    
-    <h1>Topics</h1>
-    <!-- Temas Section -->
-    <div class="row">
-            <div class="col-md-3 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Title</h5>
-                        <p class="card-text">Description</p>
-                        <p class="card-text">cards</p>
-                        <a href="#" class="card-link"><i class="fa fa-star"></i></a>
-                    </div>
+    <div class="container mt-3">
+        <div class="d-flex mb-4 ms-auto align-items-center">
+          <h2 class="">Mis Temas</h2>
+          <!-- Dropdown de Bootstrap para las etiquetas -->
+          <div class="d-flex dropdown ms-auto">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+              Etiquetas
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <li v-for="etiqueta in etiquetas" :key="etiqueta">
+              <a class="dropdown-item" href="#" @click="seleccionarEtiqueta(etiqueta)">{{ etiqueta }}</a>
+              </li>
+          </ul>
+          </div>
+        </div>
+        
+        <!-- Tarjetas que se alinearán en tres columnas en pantallas medianas en adelante -->
+        <div class="row">
+          <div class="col-md-4 mb-3" v-for="(tema, index) in temas" :key="index">
+            <div class="card" :style="{ backgroundColor: tema.color || 'white', borderWidth: '2px' }">
+              <div class="card-body">
+                <!-- Contenedor para título y botón de menú -->
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h5 class="card-title">{{ tema.titulo }}</h5>
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                      <li><a class="dropdown-item" href="#" @click.prevent="eliminar(tema.id)">Eliminar</a></li>
+                      <li><a class="dropdown-item" href="#" @click.prevent="verDetalles(tema.id)">Ver detalles</a></li>
+                      <li><a class="dropdown-item" href="#" @click.prevent="compartir(tema.id)">Compartir</a></li>
+                    </ul>
+                  </div>
                 </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <button class="btn btn-primary btn-block" @click="addTema">Add New TEMA</button>
-            </div>
+                <!-- Descripción -->
+                <p class="d-flex card-text">{{ tema.descripcion }}</p>
+                <!-- Contenedor para cantidad de tarjetas e íconos -->
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-muted">{{ tema.cantidad }} cards</small>
+                  <div class="d-flex">
+                    <i class="bi bi-tags-fill me-2 fs-5" v-b-tooltip.hover title="Etiquetas" @click="mostrarPopupEtiquetas(tema)"></i>
 
-
-            <!-- <div class="col-md-3 mb-4" v-for="tema in temas">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ tema.title }}</h5>
-                        <p class="card-text">{{ tema.description }}</p>
-                        <p class="card-text">{{ tema.cardCount }} cards</p>
-                        <a href="#" class="card-link"><i class="fa fa-star"></i></a>
-                    </div>
+                    <i :class="{'bi-star-fill text-danger': tema.favorite, 'bi-star': !tema.favorite}" 
+                    class="bi fs-5" @click="toggleFavorite(index)"></i>
+                  </div>
                 </div>
+              </div>
             </div>
-            <div class="col-md-3 mb-4">
-                <button class="btn btn-primary btn-block" @click="addTema">Add New TEMA</button>
-            </div> -->
-        </div > 
-</template>
-
-<script>
-export default{
-    name: 'TopicCards',
+          </div>
+        </div>
+        <!-- Botón flotante para agregar temas -->
+        <button class="floating-button">+</button>        
+    </div>
+  </template>
+  
+  <script>
+  export default {
     data() {
-        return {
-            msg: 'Welcome to Your Vue.js App'
-        }
+      return {
+        temas: [
+        // Supongamos que tienes un array de objetos para cada tarjeta
+        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFD1DC' },
+        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#A8E6CF' },
+        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#A7C7E7' },
+        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFF0AC' },
+        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#92E6E6' },
+        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#B5AED4' },
+        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFD1DC' },
+        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#FFAD88' },
+        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#E4FFD0' },
+        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FF9190' },
+        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#CFCFC4' },
+        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#FFFFFF' },
+        // ... más tarjetas
+      ],
+        etiquetas: ['Etiqueta 1', 'Etiqueta 2', 'Etiqueta 3'], // Añade aquí tus etiquetas
+        etiquetaSeleccionada: ''
+      };
     },
-    created() {
-        console.log('TopicCards.vue created')
-    },
+    // mounted() {
+    //   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    //   const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+    // },
     methods: {
-        sayHello() {
-            alert('Hello')
-        }
+      agregarTema() {
+        // Lógica para agregar ,un nuevo tema
+      },
+      eliminar(id) {
+        console.log(id);
+        // Llama al endpoint para eliminar el tema
+      },
+      verDetalles(id) {
+        // Redirige a la página de detalles
+        this.$router.push({ name: 'Detalles', params: { id: id } });
+      },
+      compartir(id) {
+        // Emite un evento para abrir un popup desde otro componente
+        this.$emit('abrirPopupCompartir', id);
+      },
+      mostrarPopupEtiquetas(tema){
+        console.log("etiquetas del tema: "+tema);
+      },
+      toggleFavorite(index) {
+        // Cambia el estado 'favorite' del tema específico
+        this.temas[index].favorite = !this.temas[index].favorite;
+      },
+      seleccionarEtiqueta(etiqueta) {
+        this.etiquetaSeleccionada = etiqueta;
+        // Aquí puedes agregar la lógica adicional que ocurra después de seleccionar una etiqueta
+      }
     }
-}
-</script>
+  };
+  </script>
+  
+  <style>
+  .btn-flotante {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    font-size: 24px;
+  }
+    .floating-button {
+        width: 60px; /* Ancho del botón */
+        height: 60px; /* Altura del botón */
+        border-radius: 50%; /* Hace que el botón sea redondo */
+        background-color: #4F2A93; /* Color de fondo del botón */
+        color: #FFF; /* Color del símbolo o texto del botón */
+        text-align: center; /* Centra el símbolo o texto del botón */
+        font-size: 30px; /* Tamaño del símbolo o texto del botón */
+        position: fixed; /* Posición fija */
+        bottom: 20px; /* Distancia desde el borde inferior */
+        right: 20px; /* Distancia desde el borde derecho */
+        border: none; /* Sin borde */
+        outline: none; /* Sin outline al hacer foco */
+        cursor: pointer; /* Cambia el cursor al pasar por encima */
+        box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26); /* Sombra sutil */
+    }
+
+    .floating-button:hover {
+        background-color: #7051AE; /* Color de fondo al pasar el ratón por encima */
+    }
+
+    /* Si necesitas estilos adicionales para el icono de estrella */
+    .bi-star-fill.text-danger {
+      color: red; /* O cualquier otro color que prefieras */
+    }
+
+    .bg-custom-color {
+      background-color: rgb(208, 170, 244); /* Reemplaza con tu color personalizado */
+    }
+  </style>
+  
