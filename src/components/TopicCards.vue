@@ -4,8 +4,11 @@
           <h2 class="">Mis Temas</h2>
           <!-- Dropdown de Bootstrap para las etiquetas -->
           <div class="d-flex dropdown ms-auto">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-              Etiquetas
+          <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"> -->
+            <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton"
+  data-bs-toggle="dropdown" aria-expanded="false"
+  style="color: white; background-color: #4F2A93; border-color: #4F2A93">
+            <i class="bi bi-filter"></i> Etiquetas
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <li v-for="etiqueta in etiquetas" :key="etiqueta">
@@ -51,12 +54,21 @@
           </div>
         </div>
         <!-- Botón flotante para agregar temas -->
-        <button class="floating-button">+</button>        
+        <button class="floating-button" @click="mostrarFormularioTema">+</button>
+
+        <!-- Componente modal de formulario de tema -->
+        <topic-form ref="topicFormModal"></topic-form>
     </div>
   </template>
   
   <script>
+  // import TopicForm from '../components/TopicForm.vue';
+  import TopicForm from './TopicForm.vue';
+
   export default {
+    components: {
+      'topic-form': TopicForm
+    },
     data() {
       return {
         temas: [
@@ -73,6 +85,16 @@
         { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FF9190' },
         { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#CFCFC4' },
         { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#FFFFFF' },
+        
+        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#A7C7E7' },
+        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFF0AC' },
+        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#92E6E6' },
+        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#B5AED4' },
+        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFD1DC' },
+        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#FFAD88' },
+        { topicId: 1, titulo: 'Tema 3', descripcion: 'Descripción del Tema 3', cantidad: 15, color:'#E4FFD0' },
+        { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FF9190' },
+        { topicId: 1, titulo: 'Tema 2', descripcion: 'Descripción del Tema 2', cantidad: 15, color:'#CFCFC4' },
         // ... más tarjetas
       ],
         etiquetas: ['Etiqueta 1', 'Etiqueta 2', 'Etiqueta 3'], // Añade aquí tus etiquetas
@@ -105,6 +127,13 @@
       toggleFavorite(index) {
         // Cambia el estado 'favorite' del tema específico
         this.temas[index].favorite = !this.temas[index].favorite;
+      },
+      mostrarFormularioTema() {
+        // Aquí abrimos el modal utilizando una referencia al componente TopicForm
+        // eslint-disable-next-line no-undef
+        let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
+        // let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
+        modal.show();
       },
       seleccionarEtiqueta(etiqueta) {
         this.etiquetaSeleccionada = etiqueta;
