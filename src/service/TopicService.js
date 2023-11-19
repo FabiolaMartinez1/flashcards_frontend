@@ -1,6 +1,6 @@
 export default class TopicService {
     async getTopics() { //TODO: falta token
-        const url = `http://localhost:8081/api/v1/topic`; //?shared=${shared}&?favorite=${favorite}
+        const url = `http://localhost:8081/api/v1/topics`; //?shared=${shared}&?favorite=${favorite}
         const options = {
             method: 'GET',
             headers: {
@@ -22,32 +22,32 @@ export default class TopicService {
             console.error('Error al obtener los temas:', error);
         }
     }
-    // async createTask() {
-    //     console.log('entro al createTask()\n'+task);
-    //     const url = "http://localhost:8081/api/v1/task";
-    //     const options = {
-    //         method: "POST",
-    //         headers: {
-    //         Accept: "application/json",
-    //         "Content-Type": "application/json",
-    //         Authorization: token
-    //         },
-    //         body: JSON.stringify(task)
-    //     };
-    //     console.log('options', options);
-    //     try {
-    //         const response = await fetch(url, options);
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error: Status ${response.status}`);
-    //         }
-    //         const data = await response.json();
-    //         // router.push({ name: 'TaskList' });
-    //         return data;
-    //     } catch (error) {
-    //         console.error("Error al crear una nueva tarea SV:", error);
-    //         throw error;
-    //     }
-    // }  
+    async createTopic(topic) {
+        console.log('entro al createTask()\n');
+        const url = "http://localhost:8081/api/v1/topics";
+        const options = {
+            method: "POST",
+            headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            // Authorization: token
+            },
+            body: JSON.stringify(topic)
+        };
+        console.log('options', options);
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error: Status ${response.status}`);
+            }
+            const data = await response.json();
+            // router.push({ name: 'TaskList' });
+            return data;
+        } catch (error) {
+            console.error("Error al crear una nuevo tema SV:", error);
+            throw error;
+        }
+    }  
     // async updateTask() {
     //     console.log('entro al updateTask()\n'+task+' ID'+taskId);
     //     const url = `http://localhost:8081/api/v1/task/${taskId}`;
@@ -75,7 +75,7 @@ export default class TopicService {
     // }
     async deleteTopic(topicId) {
         console.log('entro al delete()\n'+topicId);
-        const url = `http://localhost:8081/api/v1/topic/${topicId}`;
+        const url = `http://localhost:8081/api/v1/topics/${topicId}`;
         const options = {
             method: "DELETE",
             headers: {
@@ -96,7 +96,7 @@ export default class TopicService {
             
             return data;
         } catch (error) {
-            console.error("Error al eliminar una nueva tarea SV:", error);
+            console.error("Error al eliminar un nuevo topic:", error);
             throw error;
         }
     }

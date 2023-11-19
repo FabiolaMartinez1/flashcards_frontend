@@ -6,8 +6,8 @@
           <div class="d-flex dropdown ms-auto">
           <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"> -->
             <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton"
-  data-bs-toggle="dropdown" aria-expanded="false"
-  style="color: white; background-color: #4F2A93; border-color: #4F2A93">
+              data-bs-toggle="dropdown" aria-expanded="false"
+              style="color: white; background-color: #4F2A93; border-color: #4F2A93">
             <i class="bi bi-filter"></i> Etiquetas
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -60,13 +60,13 @@
         <button class="floating-button" @click="mostrarFormularioTema">+</button>
 
         <!-- Componente modal de formulario de tema -->
-        <topic-form ref="topicFormModal"></topic-form>
+        <!-- <topic-form ref="topicFormModal"></topic-form> -->
+        <topic-form ref="topicFormModal" @update-topics-list="getTopics"></topic-form>
+
     </div>
   </template>
   
   <script>
-  // import TopicForm from '../components/TopicForm.vue';
-  // import TopicService from '@/service/TopicService';
   import TopicForm from './TopicForm.vue';
   import TopicService from '../service/TopicService.js';
 
@@ -110,17 +110,7 @@
         this.topicService = new TopicService();
     },
     async mounted(){
-        // const userId = this.$store.getters['getUserId'];
-        // console.log("ID del usuario reconocido en task : " + userId);
-            // try {
-            //   this.topicService.getTopics().then((data) => {
-            //         this.temas = data;
-            //         console.log(this.temas);
-            //     });
-            // } catch (error) {
-            //     console.error(error);
-            // }
-            this.getTopics();
+      this.getTopics();
     },
     methods: {
       getTopics() {
@@ -132,9 +122,6 @@
             } catch (error) {
                 console.error(error);
             }
-      },
-      agregarTema() {
-        // Lógica para agregar ,un nuevo tema
       },
       deleteTopic(topicId) {
         console.log(topicId);
