@@ -10,11 +10,11 @@
                 <form @submit.prevent="submitForm">
                 <div class="mb-3">
                     <label for="title" class="form-label d-flex">Nuevo tema:</label>
-                    <input type="text" class="form-control" id="title" v-model="topic.title">
+                    <input type="text" class="form-control" id="title" v-model="topic.title" required>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label d-flex">Descripción:</label>
-                    <textarea class="form-control" id="description" v-model="topic.description"></textarea>
+                    <textarea class="form-control" id="description" v-model="topic.description" required></textarea>
                 </div>
                 <div class="mb-3 d-flex justify-content-between">
                     <div>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
                     <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Cancelar</button>
-                    <button type="submit" class="btn btn-primary ms-2" data-bs-dismiss="modal" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Aceptar</button>
+                    <button type="submit" class="btn btn-primary ms-2" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Aceptar</button>
                 </div>
                 </form>
             </div>
@@ -49,7 +49,7 @@
     export default {
         data() {
         return {
-            topic:{//TODO: recuperar datos en topic
+            topic:{
                 title: '',
                 description: '',
                 color: '#FFFFFF',

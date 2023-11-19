@@ -6,18 +6,18 @@
         <h2 v-else-if="typeTopic === 'compartidosConmigo'">Compartidos conmigo</h2>
         <h2 v-else>Temas</h2>
         <!-- Dropdown de Bootstrap para las etiquetas -->
-        <div class="d-flex dropdown ms-auto">
+        <div v-if="typeTopic !== 'compartidosConmigo'" class="d-flex dropdown ms-auto">
         <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"> -->
           <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton"
             data-bs-toggle="dropdown" aria-expanded="false"
             style="color: white; background-color: #4F2A93; border-color: #4F2A93">
           <i class="bi bi-filter"></i> Etiquetas
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li v-for="etiqueta in etiquetas" :key="etiqueta">
-            <a class="dropdown-item" href="#" @click="seleccionarEtiqueta(etiqueta)">{{ etiqueta }}</a>
-            </li>
-        </ul>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <li v-for="etiqueta in etiquetas" :key="etiqueta">
+              <a class="dropdown-item" href="#" @click="seleccionarEtiqueta(etiqueta)">{{ etiqueta }}</a>
+              </li>
+          </ul>
         </div>
       </div>
       
@@ -60,11 +60,11 @@
         </div>
       </div>
       <!-- Botón flotante para agregar temas -->
-      <button class="floating-button" @click="mostrarFormularioTema">+</button>
+      <button v-if="typeTopic === 'misTemas'" class="floating-button" @click="mostrarFormularioTema">+</button>
 
       <!-- Componente modal de formulario de tema -->
       <!-- <topic-form ref="topicFormModal"></topic-form> -->
-      <topic-form ref="topicFormModal" @update-topics-list="getTopics"></topic-form>
+      <topic-form v-if="typeTopic === 'misTemas'" ref="topicFormModal" @update-topics-list="getTopics"></topic-form>
 
   </div>
 </template>
