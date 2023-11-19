@@ -1,7 +1,9 @@
 
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../view/HomeView.vue';
-import TopicView from '../view/TopicView.vue';
+import MyTopicsView from '../view/MyTopicsView.vue';
+import FavoriteTopicsView from '../view/FavoriteTopicsView.vue';
+import SharedTopicsView from '../view/SharedTopicsView.vue';
 
 const routes = [
     {
@@ -11,18 +13,18 @@ const routes = [
     },
     {
         path: '/topics',
-        name: 'Topics',
-        component: TopicView
+        name: 'MyTopics',
+        component: MyTopicsView
     },
     {
         path: '/topics/favorite',
-        name: 'TopicsFavorite',
-        component: TopicView
+        name: 'FavoriteTopics',
+        component: FavoriteTopicsView
     },
     {
         path: '/topics/shared',
-        name: 'TopicsShared',
-        component: TopicView
+        name: 'SharedTopics',
+        component: SharedTopicsView
     },
 ];
 
