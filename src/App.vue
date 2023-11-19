@@ -19,7 +19,8 @@
         <div class="navbar-nav ms-auto d-flex align-items-center">
           <!-- Enlace al perfil del usuario -->
           <router-link v-if="isAuthenticated" to="/profile" class="nav-link d-flex align-items-center me-2">
-            <img src="path_to_icon.png" alt="p" class="me-2"/> <!-- Asegúrate de reemplazar 'path_to_icon.png' con la ruta real de tu imagen -->
+            <!-- <img :src="user.pictures" alt="Perfil" class="me-2"/>  -->
+            <img :src="user.picture" alt="Perfil" class="me-2 img-fluid rounded-circle" style="height: 35px; width: 35px; object-fit: cover;"/>
             {{ user.name }}
           </router-link>
           <!-- Botón de cerrar sesión o iniciar sesión -->
@@ -31,6 +32,7 @@
   </nav>
   <div v-if="isLoading">Loading ...</div>
             <div v-else>
+              <!-- No borrar -->
               <!-- <pre v-if="isAuthenticated">
                   <code>{{ user }}</code>
                   <code>{{ user.name }}</code>
