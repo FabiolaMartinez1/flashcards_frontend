@@ -1,5 +1,5 @@
-<template>
-  <div class="container mt-3">
+<template @abrirModalCompartir="mostrarModalCompartir">
+  <div class="container mt-3" >
       <div class="d-flex mb-4 ms-auto align-items-center">
         <h2 v-if="typeTopic === 'misTemas'">Mis Temas</h2>
         <h2 v-else-if="typeTopic === 'misFavoritos'">Mis Favoritos</h2>
@@ -36,7 +36,7 @@
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                     <li><a class="dropdown-item" href="#" @click.prevent="deleteTopic(tema.topicId)">Eliminar</a></li>
                     <li><a class="dropdown-item" href="#" @click.prevent="verDetalles(tema.topicId)">Ver detalles</a></li>
-                    <li><a class="dropdown-item" href="#" @click.prevent="compartir(tema.topicId)">Compartir</a></li>
+                    <li><a class="dropdown-item" href="#" @click.prevent="compartir(tema.topicId)" >Compartir</a></li>
                   </ul>
                 </div>
               </div>
@@ -66,16 +66,20 @@
       <!-- <topic-form ref="topicFormModal"></topic-form> -->
       <topic-form v-if="typeTopic === 'misTemas'" ref="topicFormModal" @update-topics-list="getTopics"></topic-form>
 
+      <access-form ref="accessFormModal" />
+
   </div>
 </template>
 
 <script>
 import TopicForm from './TopicForm.vue';
 import TopicService from '../service/TopicService.js';
+import AccessForm from './AccessForm.vue';
 
 export default {
   components: {
-    'topic-form': TopicForm
+    'topic-form': TopicForm,
+    'access-form': AccessForm
   },
   props: {
     typeTopic: String
@@ -84,6 +88,7 @@ export default {
   },
   data() {
     return {
+      mostrarModalCompartir: false,
       temas: [
       // // Supongamos que tienes un array de objetos para cada tarjeta
       // { topicId: 1, titulo: 'Tema 1', descripcion: 'Descripción del Tema 1', cantidad: 15, color:'#FFD1DC' },
@@ -150,7 +155,9 @@ export default {
     },
     compartir(id) {
       // Emite un evento para abrir un popup desde otro componente
-      this.$emit('abrirPopupCompartir', id);
+      this.showAccessForm();
+      console.log("Compartir tema: "+id);
+      
     },
     mostrarPopupEtiquetas(tema){
       console.log("etiquetas del tema: "+tema);
@@ -165,6 +172,14 @@ export default {
       let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
       // let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
       modal.show();
+    },
+    showAccessForm() {
+      // Crear una instancia del modal AccessForm utilizando su referencia
+      // eslint-disable-next-line no-undef
+      let modalAccess = new bootstrap.Modal(this.$refs.accessFormModal.$el);
+      
+      // Mostrar el modal AccessForm
+      modalAccess.show();
     },
     seleccionarEtiqueta(etiqueta) {
       this.etiquetaSeleccionada = etiqueta;
