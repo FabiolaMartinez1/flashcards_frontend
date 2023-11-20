@@ -18,7 +18,7 @@
         <!-- Perfil y botón de autenticación -->
         <div class="navbar-nav ms-auto d-flex align-items-center">
           <!-- Enlace al perfil del usuario -->
-          <router-link v-if="isAuthenticated" to="/profile" class="nav-link d-flex align-items-center me-2">
+          <router-link v-if="isAuthenticated" to="/profile" class="nav-link d-flex align-items-center me-2" @click="saveImg">
             <!-- <img :src="user.pictures" alt="Perfil" class="me-2"/>  -->
             <img :src="user.picture" alt="Perfil" class="me-2 img-fluid rounded-circle" style="height: 35px; width: 35px; object-fit: cover;"/>
             {{ user.name }}
@@ -67,6 +67,8 @@ export default {
       
     },
     logout() {
+      localStorage.removeItem('img');
+      localStorage.removeItem('mail');
         this.$auth0.logout({ 
           logoutParams: { 
             returnTo: window.location.origin 
@@ -78,6 +80,16 @@ export default {
         console.log(this.token);
         await this.loginService.doSomethingWithToken(this.token);
       },
+    saveImg(){
+      // si en el local storage no hay una imagen guardada, se guarda la imagen del usuario
+      if(localStorage.getItem('img') == null){
+        localStorage.setItem('img', this.user.picture);
+      }
+      if(localStorage.getItem('mail') == null){
+        localStorage.setItem('mail', this.user.email);
+      }
+      console.log("img"+this.user.picture);
+    }
   }
 };
 </script>

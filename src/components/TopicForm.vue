@@ -34,7 +34,7 @@
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
                     <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Cancelar</button>
-                    <button type="submit" class="btn btn-primary ms-2" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Aceptar</button>
+                    <button type="submit" class="btn btn-primary ms-2" data-bs-dismiss="modal" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Aceptar</button>
                 </div>
                 </form>
             </div>
