@@ -24,6 +24,7 @@
       <!-- Tarjetas que se alinearán en tres columnas en pantallas medianas en adelante -->
       <div class="row">
         <div class="col-md-4 mb-3" v-for="(tema, index) in temas" :key="index">
+          
           <div class="card" :style="{ backgroundColor: tema.color || 'white', borderWidth: '2px' }">
             <div class="card-body">
               <!-- Contenedor para título y botón de menú -->
@@ -55,10 +56,14 @@
                   class="bi fs-5" @click="toggleFavorite(index)"></i>
                 </div>
               </div>
+              
             </div>
+            <!-- aqui es -->
+            <!-- <access-form  ref="accessFormModal"/> -->
           </div>
         </div>
       </div>
+      
       <!-- Botón flotante para agregar temas -->
       <button v-if="typeTopic === 'misTemas'" class="floating-button" @click="mostrarFormularioTema">+</button>
 
@@ -66,7 +71,7 @@
       <!-- <topic-form ref="topicFormModal"></topic-form> -->
       <topic-form v-if="typeTopic === 'misTemas'" ref="topicFormModal" @update-topics-list="getTopics"></topic-form>
 
-      <access-form ref="accessFormModal" />
+      
 
   </div>
 </template>
@@ -74,12 +79,12 @@
 <script>
 import TopicForm from './TopicForm.vue';
 import TopicService from '../service/TopicService.js';
-import AccessForm from './AccessForm.vue';
+// import AccessForm from './AccessForm.vue';
 
 export default {
   components: {
     'topic-form': TopicForm,
-    'access-form': AccessForm
+    // 'access-form': AccessForm
   },
   props: {
     typeTopic: String
@@ -153,11 +158,15 @@ export default {
       // Redirige a la página de detalles
       this.$router.push({ name: 'Detalles', params: { id: id } });
     },
-    compartir(id) {
+    async compartir(topicId) {
       // Emite un evento para abrir un popup desde otro componente
-      this.showAccessForm();
-      console.log("Compartir tema: "+id);
-      
+      console.log("Compartir tema: "+topicId);
+    // await this.showAccessForm(topicId);
+      this.$router.push({
+        name: 'AccessUserTopic',
+        params: { topicId: topicId },
+      });
+        
     },
     mostrarPopupEtiquetas(tema){
       console.log("etiquetas del tema: "+tema);
@@ -168,18 +177,25 @@ export default {
     },
     mostrarFormularioTema() {
       // Aquí abrimos el modal utilizando una referencia al componente TopicForm
+      
       // eslint-disable-next-line no-undef
       let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
       // let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
       modal.show();
     },
-    showAccessForm() {
+    async showAccessForm(topicId) {
       // Crear una instancia del modal AccessForm utilizando su referencia
+      this.$nextTick(() => {
       // eslint-disable-next-line no-undef
-      let modalAccess = new bootstrap.Modal(this.$refs.accessFormModal.$el);
-      
+      let modalAccess = new bootstrap.Modal(this.$refs.accessFormModal, {});
+      // Pasar el topicId al componente AccessForm
+      this.$refs.accessFormModal.topicId = topicId;
       // Mostrar el modal AccessForm
-      modalAccess.show();
+      if (modalAccess && modalAccess._backdrop) {
+        // Mostrar el modal AccessForm
+        modalAccess.show();
+      }
+      });
     },
     seleccionarEtiqueta(etiqueta) {
       this.etiquetaSeleccionada = etiqueta;
