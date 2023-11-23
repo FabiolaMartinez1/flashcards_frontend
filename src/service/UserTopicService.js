@@ -46,4 +46,33 @@ export default class UserTopicService {
             console.error('Error al eliminar logicamente un acceso:', error);
         }
     }
+    async createAccessToTopic(topicId, accessLevelId, userId) { //TODO: falta token
+        const url = `http://localhost:8081/api/v1/topics/shared`;
+        const options = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+                // Authorization: token,
+            },
+            body:{
+                topicId: topicId,
+                accessLevelId: accessLevelId,
+                userId: userId
+            }
+        };
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error: Status: ${response.status}`);
+            }
+            const access = await response.json();
+            console.log(`nuevo usuario con acceso al topic ${topicId} en userTopicService `+access.data);
+            console.log("obtuvo usuarios con acceso"+JSON.stringify(access.data));
+
+            return access.data;
+        } catch (error) {
+            console.error('Error al obtener los usuarios con acceso:', error);
+        }
+    }
 }

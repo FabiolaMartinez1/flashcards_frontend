@@ -37,7 +37,7 @@
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                     <li><a class="dropdown-item" href="#" @click.prevent="deleteTopic(tema.topicId)">Eliminar</a></li>
                     <li><a class="dropdown-item" href="#" @click.prevent="verDetalles(tema.topicId)">Ver detalles</a></li>
-                    <li><a class="dropdown-item" href="#" @click.prevent="compartir(tema.topicId)" >Compartir</a></li>
+                    <li><a class="dropdown-item" href="#" @click.prevent="compartir(tema.topicId, tema.title)" >Compartir</a></li>
                   </ul>
                 </div>
               </div>
@@ -158,13 +158,13 @@ export default {
       // Redirige a la página de detalles
       this.$router.push({ name: 'Detalles', params: { id: id } });
     },
-    async compartir(topicId) {
+    async compartir(topicId, topicTitle) {
       // Emite un evento para abrir un popup desde otro componente
       console.log("Compartir tema: "+topicId);
     // await this.showAccessForm(topicId);
       this.$router.push({
         name: 'AccessUserTopic',
-        params: { topicId: topicId },
+        params: { topicId: topicId, topicTitle: topicTitle  },
       });
         
     },

@@ -7,7 +7,7 @@
             <div>
                 <h7 class="modal-title" id="modalLabel">Compartir</h7>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                <h4 class="modal-title text-start" id="modalLabel">Titulo del tema</h4>
+                <h4 class="modal-title text-start" id="modalLabel" >{{ topicTitle }}</h4>
                     <p class="text-start">¿Quién tiene acceso?</p>
                     <!-- aqui empieza la tabla -->
                     <div class="container">
@@ -54,14 +54,14 @@
                                 <input type="text" class="form-control" placeholder="correo@ejemplo.com" aria-label="Recipient's username" aria-describedby="basic-addon2" v-model="searchText" @input="updateResults">
                                 <span class="input-group-text" id="basic-addon2">
                                     <button type="button" class="btn btn-link" @click="eliminarTema">
-                                        <i class="fas fa-search" style="color: black;" @click="search"></i>
+                                        <i class="fas fa-search" style="color: black;" @click="findByEmail()"></i>
                                     </button>
                                 </span>
                             </div>
                             <!-- Lista de resultados como dropdown -->
                             <div class="position-absolute top-100 start-0" v-if="showResults">
                                 <div class="list-group w-100">
-                                    <a href="#" class="list-group-item list-group-item-action" v-for="result in searchResults" :key="result.id">{{ result.email }}</a>
+                                    <a href="#" class="list-group-item list-group-item-action" v-for="result in searchResults" :key="result.userId" @click="selectSearchResult(result)">{{ result.email }}</a>
                                 </div>
                             </div>
                             </div>
@@ -70,7 +70,7 @@
                     <!-- tipo de acceso  -->
                     <div class="container">
                         <div class="form-group row">
-                                <select class="form-select" id="validationCustom04" v-model="selectedAccessLevel" required>
+                                <select class="form-select" id="validationCustom04" v-model="selectedAccessLevelId" required>
                                     <option value="" disabled selected>Tipo de acceso</option>
                                     <option v-for="option in accessLevels" :key="option.accessLevelId" :value="option.accessLevelId">{{ option.level }}</option>
                                 </select>
@@ -83,7 +83,7 @@
                         <br/>
                         <div class="form-group row">
                             <div class="">
-                            <button name="submit" type="submit" class="btn btn-primary">Submit</button>
+                            <button name="submit" type="submit" class="btn btn-primary" @click="createAccessToTopic()" >Compartir</button>
                             </div>
                         </div>
                     </div>
@@ -102,6 +102,7 @@
 //  import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Importa el JS de Bootstrap
 
 import UserTopicService from '../service/UserTopicService.js';
+import UserService from '../service/UserService.js';
 import AccessLevelService from '../service/AccessLevelService.js';
 import moment from 'moment';
 import Swal from 'sweetalert2';
@@ -109,7 +110,11 @@ import Swal from 'sweetalert2';
 export default {
     props: {
         topicId: {
-            type: Number, // o el tipo de dato apropiado para tu caso
+            type: Number,
+            required: true,
+        },
+        topicTitle: {
+            type: String,
             required: true,
         },
     },
@@ -118,19 +123,21 @@ export default {
         searchText: '',
         showResults: false,
         searchResults: [
-            { id: 1, email: 'maria@gmail.com' },
-            { id: 2, email: 'maria2@gmail.com' },
-            { id: 3, email: 'maria3@gmail.com' },
+            // { id: 1, email: 'maria@gmail.com' },
+            // { id: 2, email: 'maria2@gmail.com' },
+            // { id: 3, email: 'maria3@gmail.com' },
         ],
         accessLevels: [],
-        selectedAccessLevel: "",
+        selectedAccessLevelId: "",
         updatedAccessLevel: null,
         usersTopics: [],
+        userId: null,
         };
     },
     created(){
         this.userTopicService = new UserTopicService();
         this.accessLevelService = new AccessLevelService();
+        this.userService = new UserService();
         console.log('------------------------este el es ID del tema: '+this.topicId);
     },
     async mounted(){
@@ -165,6 +172,45 @@ export default {
                 console.error(error);
             }
         },
+        findByEmail(){
+            try {
+                this.userService.findByEmailContainingIgnoreCase(this.searchText).then((data) => {
+                    this.searchResults = data;
+                    console.log(this.searchResults);
+                    this.showResults = true;
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        selectSearchResult(result){
+            // Asigna el valor al navegador
+            this.searchText = result.email;
+            this.userId = result.userId;
+
+            // Oculta las opciones
+            this.showResults = false;
+        },
+        createAccessToTopic(){
+            console.log("este es el id del usuario: "+this.userId);
+            console.log("este es el id del nivel de acceso: "+this.selectedAccessLevelId);
+            console.log("este es el id del tema: "+this.topicId);
+            try {
+                this.userTopicService.createAccessToTopic(this.topicId, this.selectedAccessLevelId, this.userId).then((data) => {
+                    console.log(data);    
+                    Swal.fire(
+                            'Compartido',
+                            'Tu registro ha sido guardado.',
+                            'success'
+                        );
+                        this.getAllByTopicId(this.topicId);
+                    
+                    console.log(this.usersTopics);
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        },
         confirmDelete(userTopicId) {
             Swal.fire({
             title: '¿Estás segur@?',
@@ -181,7 +227,6 @@ export default {
             });
         },
         deleteLogicAccess(userTopicId){
-
             try {
                 this.userTopicService.deleteLogicAccess(this.topicId, userTopicId).then((data) => {
                     if(data.responseCode == "F-004") {

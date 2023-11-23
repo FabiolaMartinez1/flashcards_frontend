@@ -30,7 +30,8 @@ const routes = [
     {
         path: '/topics/:topicId/shared',
         name: 'AccessUserTopic',
-        component: AccessUserTopicView
+        component: AccessUserTopicView,
+        props: true
     },
 ];
 
