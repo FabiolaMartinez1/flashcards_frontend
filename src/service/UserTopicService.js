@@ -55,11 +55,11 @@ export default class UserTopicService {
                 'Content-Type': 'application/json'
                 // Authorization: token,
             },
-            body:{
+            body:JSON.stringify({
                 topicId: topicId,
                 accessLevelId: accessLevelId,
                 userId: userId
-            }
+            })
         };
         try {
             const response = await fetch(url, options);
