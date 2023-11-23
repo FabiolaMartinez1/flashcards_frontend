@@ -1,41 +1,33 @@
 <template>
-  <!-- Modal Trigger -->
-  <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#userProfileModal">
-    Ver Perfil
-  </button>
-
-  <!-- Modal -->
-  <div class="modal fade" id="userProfileModal" tabindex="-1" aria-labelledby="userProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="userProfileModalLabel">Perfil de Usuario</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <!-- <div class="d-flex justify-content-center mb-4 col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-            <img v-if="profile.img" :src="profile.img" alt="Profile Image" class="img-fluid rounded-circle" style="width: 120px;"/>
-            <img v-else src="../assets/profile_img_default.png" alt="Profile Image" class="img-fluid rounded-circle" style="width: 120px;"/>
-          </div>-->
-
-          <div class="row">
-          <!-- Columna para la imagen -->
-          <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-              <br>
-            <img v-if="img" :src="img" alt="Profile Image" class="img-fluid rounded-circle" style="width: 150px;"/>
-            <img v-else src="../assets/profile_img_default.png" alt="Profile Image" class="img-fluid rounded-circle" style="width: 150px;"/>
-          </div>
-
-          <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8">
-              <hr>
-              <div class="d-flex align-items-center">
-                                          <i class="bi bi-person-circle me-2 mb-4"></i>
-                                          <div>
-                                          <strong class="d-flex">Nombre Completo:</strong>
-                                          <p class="d-flex">{{ profile.username }}</p>
-                                          </div>
-                                      </div>
-          <div class="d-flex align-items-center">
+  <div class="modal fade" id="userProfileModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Perfil de Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- <div v-if="profile && Object.keys(profile).length > 0" class="modal-body"> -->
+            <div v-if="isLoading" class="loading-indicator">Cargando...</div> <!-- Indicador de carga -->
+            <div v-else-if="profile && Object.keys(profile).length > 0" class="modal-body">
+      
+              <div class="row">
+                <!-- Columna para la imagen -->
+                <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                    <br>
+                  <img v-if="img" :src="img" alt="Profile Image" class="img-fluid rounded-circle" style="width: 150px;"/>
+                  <img v-else src="../assets/profile_img_default.png" alt="Profile Image" class="img-fluid rounded-circle" style="width: 150px;"/>
+                </div>
+                
+                <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                  <hr>
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-person-circle me-2 mb-4"></i>
+                      <div>
+                      <strong class="d-flex">Nombre Completo:</strong>
+                      <p class="d-flex">{{ profile.username }}</p>
+                      </div>
+                  </div>
+                  <div class="d-flex align-items-center">
                                           <i class="bi bi-envelope-at-fill me-2 mb-4"></i>
                                           <div>
                                           <strong class="d-flex">Correo Electronico</strong>
@@ -46,7 +38,7 @@
                                           <i class="bi bi-mortarboard-fill me-2 mb-4"></i>
                                           <div>
                                           <strong class="d-flex">Grado Académico:</strong>
-                                          <p class="d-flex">{{ profile.academicDegreeName }}</p>
+                                          <p class="d-flex">{{ profile.academicDegree.name }}</p>
                                           </div>
                                       </div>
           <div class="d-flex align-items-center">
@@ -70,50 +62,63 @@
                                           <p class="d-flex">{{ formatDate(profile.createdDate) }}</p>
                                           </div>
                                       </div>
-          </div>
-          </div>
-            
-          <!-- Aquí van los demás campos del formulario ... -->
-
+                                      <!-- <hr> -->
+                </div>
+              </div>
+            </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
+  </div>  
 </template>
 
 <script>
 import UserService from '../service/UserService.js';
+// import Vue from 'vue';
+
 export default {
   data() {
     return {
-      profile: [
-        // name: 'FABIOLA ALEJANDRA MARTINEZ ACARAPI',
-    ],
+      isLoading: true,
+      profile:{},
       img: '',
+      email: '',
     };
   },
+  // watch: {
+  //   getProfile() {
+  //     this.getProfile();
+  //   }
+  // },
+  userService: null,
   created() {
     this.userService = new UserService();
     this.img = localStorage.getItem('img') || '../assets/profile_img_default.png';
-    this.profile.email = localStorage.getItem('mail') || 'example@gmail.com';
-    console.log(this.profile.email);
-  },
-  async mounted(){
     this.getProfile();
+    // this.email = localStorage.getItem('mail') || 'example@gmail.com';
+    // console.log(this.email);
+  },
+  // async beforeMount(){
+  //   this.getProfile();
+  // },
+  async mounted(){
+    if(this.isLoading){
+      await this.getProfile();
+    }
   },
   methods: {
-    getProfile() {
-    try {
-          this.userService.getUserProfile(this.profile.email).then((data) => {
-          // this.userService.getUserProfile("bob.smith@example.com").then((data) => {
-            console.log(this.profile.email);
-                this.profile = data;
-                console.log(this.profile);
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    },
+    async getProfile() {
+      this.isLoading = true;
+      try {
+        const data = await this.userService.getUserProfile(localStorage.getItem('mail'));
+        this.profile = data;
+        console.log("Datos recibidos:", data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoading = false;
+      }
+    },  
+
     formatDate(timestamp) {
       const date = new Date(timestamp);
       const day = date.getDate().toString().padStart(2, '0');
@@ -128,7 +133,10 @@ export default {
 <style>
 /* Estilos personalizados para los íconos y texto si es necesario */
 .bi {
-  font-size: 1.5rem; /* Tamaño de los íconos */
-  color: #36205D; /* Color de los íconos */
-}
+    font-size: 1.5rem; /* Tamaño de los íconos */
+    color: #36205D; /* Color de los íconos */
+  }
+  .d-flex {
+      word-break: break-word;
+    }
 </style>
