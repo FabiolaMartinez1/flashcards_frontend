@@ -51,7 +51,7 @@
     export default {
         data() {
         return {
-            profile:{},
+            // profile:{},
             topic:{
                 title: '',
                 description: '',
@@ -96,28 +96,33 @@
 
         //funcion con un for para llamar a la funcion de crear tarjetas por cada cantidad de tarjeta
         async createCards(cantTarjetas, title, description){
+            console.info("createcards Creando tarjetas...");
             const age=15;
+            const grade = "Estudiante de secundaria";
             try {
-                const data = await this.userService.getUserProfile(localStorage.getItem('mail'));
-                this.profile = data;
-                console.log("Datos recibidos:", data);
+                // const data = await this.userService.getUserProfile(localStorage.getItem('mail'));
+                // this.profile = data;
+                // console.log("Datos recibidos para card:", data);
+                // console.log("Datos recibidos para card:", this.profile);
             } catch (error) {
                 //profile por default
-                this.profile = {
-                    id: 1,
-                    name: 'Nombre de usuario',
-                    topics: 0,
-                    createdDate: '2021-10-10',
-                };
+                // this.profile = {
+                //     id: 1,
+                //     name: 'Nombre de usuario',
+                //     topics: 0,
+                //     createdDate: '2021-10-10',
+                // };
                 console.log(error);
             }
         
             for (let i = 0; i < cantTarjetas; i++) {
-                this.createCard(title, description, this.profile.academicDegree.name, age);
+                console.log("for"+i);
+                this.createCard(title, description, grade, age);
             }
         },
         //funcion para crear tarjetas
         createCard(title, description, academicDegree, age){
+            console.info("api Creando tarjeta...");
             try {
                 this.dataAI.title = title;
                 this.dataAI.description = description;
@@ -127,7 +132,7 @@
                 //     console.log(data);
                 //     console.log("Tarjeta creada");
                 // });
-                this.openAIService.OpenAIService(this.dataAI).then((data) => {
+                this.openAIService.createdCardWithAI(this.dataAI).then((data) => {
                     alert(JSON.stringify(data)); // Muestra la respuesta en un alert
                 });
 
