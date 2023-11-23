@@ -1,6 +1,6 @@
 <template>
     <div class="modal fade" id="topicFormModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="modalLabel">Agregar tema</h4>
@@ -35,6 +35,7 @@
                 <div class="modal-footer d-flex justify-content-center">
                     <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Cancelar</button>
                     <button type="submit" class="btn btn-primary ms-2" data-bs-dismiss="modal" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Aceptar</button>
+                    <!-- TODO: cerrar cuando de aceptar y el campo esta lleno -->
                 </div>
                 </form>
             </div>
@@ -46,13 +47,21 @@
     <script>
     
     import TopicService from '../service/TopicService.js';
+    import OpenAIService from '../service/OpenAIService.js';
     export default {
         data() {
         return {
+            profile:{},
             topic:{
                 title: '',
                 description: '',
                 color: '#FFFFFF',
+            },
+            dataAI:{
+                title: '',
+                description: '',
+                academicDegree: '',
+                age: '',
             },
             cantidadTarjetas: 0,
             etiquetasSeleccionadas: [],
@@ -61,12 +70,14 @@
         },
         created(){
             this.topicService = new TopicService();
+            this.openAIService = new OpenAIService();
         },
         methods: {
         submitForm() {
+            console.log("numero de tarjetas: "+this.cantidadTarjetas);
             // Lógica para procesar el formulario
             // console.log('Formulario datos:', this.nuevoTema, this.descripcion, this.cantidadTarjetas, this.color, this.etiquetasSeleccionadas);
-            console.log('Formulario datos:', this.title, this.description, this.cantidadTarjetas, this.color, this.etiquetasSeleccionadas);
+            // console.log('Formulario datos:', this.title, this.description, this.cantidadTarjetas, this.color, this.etiquetasSeleccionadas);
 
             console.log("Datos en topic: "+this.topic.title + this.topic.description + this.topic.color);
             try {
@@ -75,14 +86,56 @@
                     console.log("Tema creado");
                     this.$emit('update-topics-list');
                 });
+                
+                this.createCards(this.cantidadTarjetas, this.topic.title, this.topic.description);
             } catch (error) {
                 console.error(error);
             }
-
             this.$emit('close');
             },
 
-        }
-    };
-    </script>
-    
+        //funcion con un for para llamar a la funcion de crear tarjetas por cada cantidad de tarjeta
+        async createCards(cantTarjetas, title, description){
+            const age=15;
+            try {
+                const data = await this.userService.getUserProfile(localStorage.getItem('mail'));
+                this.profile = data;
+                console.log("Datos recibidos:", data);
+            } catch (error) {
+                //profile por default
+                this.profile = {
+                    id: 1,
+                    name: 'Nombre de usuario',
+                    topics: 0,
+                    createdDate: '2021-10-10',
+                };
+                console.log(error);
+            }
+        
+            for (let i = 0; i < cantTarjetas; i++) {
+                this.createCard(title, description, this.profile.academicDegree.name, age);
+            }
+        },
+        //funcion para crear tarjetas
+        createCard(title, description, academicDegree, age){
+            try {
+                this.dataAI.title = title;
+                this.dataAI.description = description;
+                this.dataAI.academicDegree = academicDegree;
+                this.dataAI.age = age;
+                // this.openAIService.OpenAIService(this.dataAI).then((data) => {
+                //     console.log(data);
+                //     console.log("Tarjeta creada");
+                // });
+                this.openAIService.OpenAIService(this.dataAI).then((data) => {
+                    alert(JSON.stringify(data)); // Muestra la respuesta en un alert
+                });
+
+            } catch (error) {
+                console.error(error);
+            }
+            this.$emit('close');
+        },
+    }
+};
+</script>

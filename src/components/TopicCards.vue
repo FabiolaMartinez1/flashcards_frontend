@@ -36,7 +36,7 @@
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                     <li><a class="dropdown-item" href="#" @click.prevent="deleteTopic(tema.topicId)">Eliminar</a></li>
-                    <li><a class="dropdown-item" href="#" @click.prevent="verDetalles(tema.topicId)">Ver detalles</a></li>
+                    <li><a class="dropdown-item" href="#" @click.prevent="ViewCards(tema.topicId)">Ver detalles</a></li>
                     <li><a class="dropdown-item" href="#" @click.prevent="compartir(tema.topicId, tema.title)" >Compartir</a></li>
                   </ul>
                 </div>
@@ -129,6 +129,7 @@ export default {
   },
   async mounted(){
     this.getTopics();
+    // this.$refs.TopicForm.$on('close-modal', this.cerrarModal);
   },
   methods: {
     getTopics() {
@@ -136,6 +137,7 @@ export default {
             this.topicService.getTopics().then((data) => {
                   this.temas = data;
                   console.log(this.temas);
+                  this.cerrarModal();
               });
           } catch (error) {
               console.error(error);
@@ -154,9 +156,10 @@ export default {
               console.error(error);
           }
     },
-    verDetalles(id) {
+    ViewCards(topicId) {
       // Redirige a la página de detalles
-      this.$router.push({ name: 'Detalles', params: { id: id } });
+      this.$router.push({ name: 'ViewCards', 
+      params: { topicId: topicId } });
     },
     async compartir(topicId, topicTitle) {
       // Emite un evento para abrir un popup desde otro componente
@@ -182,6 +185,13 @@ export default {
       let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
       // let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
       modal.show();
+    },
+    cerrarModal() {
+      // Cerrar el modal
+      
+      // eslint-disable-next-line no-undef
+      let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
+      modal.hide();
     },
     async showAccessForm(topicId) {
       // Crear una instancia del modal AccessForm utilizando su referencia
