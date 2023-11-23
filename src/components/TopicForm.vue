@@ -1,6 +1,6 @@
 <template>
     <div class="modal fade" id="topicFormModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="modalLabel">Agregar tema</h4>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
                     <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Cancelar</button>
-                    <button type="submit" class="btn btn-primary ms-2" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Aceptar</button>
+                    <button type="submit" class="btn btn-primary ms-2" data-bs-dismiss="modal" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Aceptar</button>
                 </div>
                 </form>
             </div>
