@@ -4,7 +4,6 @@ import HomeView from '../view/HomeView.vue';
 import MyTopicsView from '../view/MyTopicsView.vue';
 import FavoriteTopicsView from '../view/FavoriteTopicsView.vue';
 import SharedTopicsView from '../view/SharedTopicsView.vue';
-import UserView from '../view/UserView.vue';
 
 const routes = [
     {
@@ -27,11 +26,6 @@ const routes = [
         name: 'SharedTopics',
         component: SharedTopicsView
     },
-    {
-        path: '/profile',
-        name: 'UserProfile',
-        component: UserView
-    }
 ];
 
 const router = createRouter({
