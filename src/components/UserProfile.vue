@@ -132,6 +132,7 @@ export default {
 
 <style>
 /* Estilos personalizados para los íconos y texto si es necesario */
+/* TODO: cambiar el color solo de los iconos de aqui */
 .bi {
     font-size: 1.5rem; /* Tamaño de los íconos */
     color: #36205D; /* Color de los íconos */
