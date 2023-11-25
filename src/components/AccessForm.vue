@@ -2,12 +2,15 @@
     <div class="fullscreen-form">
         <div class="container">
         <div class="row">
-            <div class="col-md-8 offset-md-2">
+            <div class="col-md-10 offset-md-1">
             <!-- Tu contenido del formulario aquí -->
             <div>
-                <h7 class="modal-title" id="modalLabel">Compartir</h7>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                <h4 class="modal-title text-start" id="modalLabel" >{{ topicTitle }}</h4>
+                <div class="d-flex justify-content-between align-items-center p-3">
+                    <h7 class="modal-title" id="modalLabel">Compartir</h7>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeCurrentWindow()"></button>-->
+                    <button type="button" class="btn btn-close" aria-label="Close" @click="closeCurrentWindow()"></button>
+                </div>
+                <h4 class="modal-title text-start" id="modalLabel"  >{{ this.titleTopic }}</h4>
                     <p class="text-start">¿Quién tiene acceso?</p>
                     <!-- aqui empieza la tabla -->
                     <div class="container">
@@ -27,7 +30,7 @@
                                         <input type="text" class="transparent-input" readonly :value="row.user.email">
                                     </th>
                                     <td>
-                                        <select class="form-select" id="validationCustom04" v-model="row.accessLevel.accessLevelId" required>
+                                        <select class="form-select" id="validationCustom04" v-model="row.accessLevel.accessLevelId" required @change="updateAccessLevel(row.userTopicId, row.accessLevel.accessLevelId, row.lastDate, row.favorite)">
                                             <!-- :selected="option.accessLevelId === row.accessLevel.accessLevelId" -->
                                             <option v-for="option in accessLevels" :key="option.accessLevelId" :value="option.accessLevelId" >{{ option.level }}</option>
                                         </select>
@@ -132,6 +135,7 @@ export default {
         updatedAccessLevel: null,
         usersTopics: [],
         userId: null,
+        titleTopic: null,
         };
     },
     created(){
@@ -149,12 +153,15 @@ export default {
         // });
         this.getAllAccessLevels();
         this.getAllByTopicId(this.topicId);
+
         console.log('------------------------este el es ID del tema: '+this.topicId);
+        
     },
     methods: {
         getAllAccessLevels(){
             try {
                 this.accessLevelService.getAllAccessLevels().then((data) => {
+                    
                     this.accessLevels = data;
                     console.log("niveles de acceso obtenidooooss :D "+this.accessLevels);
                 });
@@ -167,6 +174,8 @@ export default {
                 this.userTopicService.getAllByTopicId(topicId).then((data) => {
                     this.usersTopics = data;
                     console.log(this.usersTopics);
+                    this.titleTopic = this.usersTopics.length > 0 ? this.usersTopics[0].topic.title : '';
+                    console.log("titulo : " + this.titleTopic);
                 });
             } catch (error) {
                 console.error(error);
@@ -196,7 +205,7 @@ export default {
             console.log("este es el id del nivel de acceso: "+this.selectedAccessLevelId);
             console.log("este es el id del tema: "+this.topicId);
             try {
-                this.userTopicService.createAccessToTopic(this.topicId, this.selectedAccessLevelId, this.userId).then((data) => {
+                this.userTopicService.createAccessToTopic(this.topicId, this.selectedAccessLevelId, this.userId, 2).then((data) => { //FIXME cambiar el 2 por el id del usuario logueado
                     console.log(data);    
                     Swal.fire(
                             'Compartido',
@@ -222,17 +231,36 @@ export default {
             confirmButtonText: 'Sí, eliminar'
             }).then((result) => {
             if (result.isConfirmed) {
-                this.deleteLogicAccess(userTopicId);
+                this.deleteLogicAccess(userTopicId, 2);//FIXME cambiar el 2 por el id del usuario logueado
             }
             });
         },
-        deleteLogicAccess(userTopicId){
+        deleteLogicAccess(userTopicId, userIdHeader){
             try {
-                this.userTopicService.deleteLogicAccess(this.topicId, userTopicId).then((data) => {
+                this.userTopicService.deleteLogicAccess(userTopicId, userIdHeader).then((data) => {
                     if(data.responseCode == "F-004") {
                         Swal.fire(
                             'Eliminado',
                             'Tu registro ha sido eliminado.',
+                            'success'
+                        );
+                        this.getAllByTopicId(this.topicId);
+                    } else {
+                        alert(data.responseMessage);
+                    }
+                    console.log(this.usersTopics);
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        updateAccessLevel(userTopicId, newAccessLevelId, lastDate, favorite){
+            try{
+                this.userTopicService.updateByUserTopicId(userTopicId, newAccessLevelId, lastDate, favorite, 2).then((data) => {//FIXME cambiar el 2 por el id del usuario logueado
+                    if(data.responseCode == "F-003") {
+                        Swal.fire(
+                            'Actualizado',
+                            'Tu registro ha sido actualizado.',
                             'success'
                         );
                         this.getAllByTopicId(this.topicId);
@@ -258,6 +286,9 @@ export default {
         // Aquí podrías actualizar this.searchResults mientras se escribe en el campo de búsqueda
         // Puedes ajustar la lógica según tus necesidades
         },
+        closeCurrentWindow() {
+            this.$router.push({ name: 'MyTopics'});
+        }
 
     },
 };
