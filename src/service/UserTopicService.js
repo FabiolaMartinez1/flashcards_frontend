@@ -1,12 +1,11 @@
 export default class UserTopicService {
 
     async getAllByTopicId(topicId) { //TODO: falta token
-        const url = `http://localhost:8081/api/v1/topics/${topicId}/shared`;
+        const url = `http://localhost:8081/api/v1/topics/${topicId}/access`;
         const options = {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
-                // Authorization: token,
             }
         };
         try {
@@ -23,12 +22,13 @@ export default class UserTopicService {
             console.error('Error al obtener los usuarios con acceso:', error);
         }
     }
-    async deleteLogicAccess(topicId, userTopicId){
-        const url = `http://localhost:8081/api/v1/topics/${topicId}/shared/${userTopicId}`;
+    async deleteLogicAccess(userTopicId, userIdHeader){
+        const url = `http://localhost:8081/api/v1/topics/access/${userTopicId}`;
         const options = {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
+                userIdHeader: userIdHeader
                 // Authorization: token,
             }
         };
@@ -46,13 +46,14 @@ export default class UserTopicService {
             console.error('Error al eliminar logicamente un acceso:', error);
         }
     }
-    async createAccessToTopic(topicId, accessLevelId, userId) { //TODO: falta token
-        const url = `http://localhost:8081/api/v1/topics/shared`;
+    async createAccessToTopic(topicId, accessLevelId, userId, userIdHeader) { //TODO: falta token
+        const url = `http://localhost:8081/api/v1/topics/access`;
         const options = {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                userIdHeader: userIdHeader
                 // Authorization: token,
             },
             body:JSON.stringify({
@@ -73,6 +74,37 @@ export default class UserTopicService {
             return access.data;
         } catch (error) {
             console.error('Error al obtener los usuarios con acceso:', error);
+        }
+    }
+    async updateByUserTopicId(userTopicId, accessLevelId, lastDate,favorite, userIdHeader){
+        const url = `http://localhost:8081/api/v1/topics/access`;
+        const options = {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                userIdHeader: userIdHeader
+                // Authorization: token,
+            },
+            body:JSON.stringify({
+                userTopicId: userTopicId,
+                accessLevelId: accessLevelId,
+                lastDate: lastDate,
+                favorite: favorite
+            })
+        };
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error: Status: ${response.status}`);
+            }
+            const updated = await response.json();
+            console.log(`se actualizó correctamente el acceso para el usuario`+updated);
+            console.log("confirmando actualizacion data:"+JSON.stringify(updated.data));
+
+            return updated;
+        } catch (error) {
+            console.error('Error al actualizar un acceso:', error);
         }
     }
 }
