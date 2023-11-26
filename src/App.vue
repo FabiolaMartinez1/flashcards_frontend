@@ -22,10 +22,12 @@
             <img :src="user.picture" alt="Perfil" class="me-2 img-fluid rounded-circle" style="height: 35px; width: 35px; object-fit: cover;"/>
             {{ user.name }}
           </router-link> -->
-          <div v-if="isAuthenticated" class="nav-link d-flex align-items-center me-2" @click="viewProfileModal">
+          <!-- <div v-if="isAuthenticated" class="nav-link d-flex align-items-center me-2" @click="viewProfileModal">
             <img :src="user.picture" alt="Perfil" class="me-2 img-fluid rounded-circle" style="height: 35px; width: 35px; object-fit: cover;"/>
             {{ user.name }}
-          </div>
+          </div> -->
+          <button class="btn-info" @click="saveImg">aqui para guardar email</button>
+          <user-profile v-if="isAuthenticated"  ref="userProfileModal" ></user-profile>
           <!-- Botón de cerrar sesión o iniciar sesión -->
           <button v-if="isAuthenticated" class="btn btn-outline-light" @click="logout">Log out</button>
           <button v-else class="btn btn-outline-light" @click="login">Log in</button>
@@ -44,7 +46,6 @@
             </div>
   <div>
     
-    <user-profile v-if="!isLoading" ref="userProfileModal"></user-profile>
     <router-view v-if="!isLoading" ></router-view>
   </div>
 </template>
@@ -73,6 +74,13 @@ export default {
       this.$auth0.loginWithRedirect();
       //imprimir token
       console.log(this.$auth0.getTokenSilently());
+
+      if(localStorage.getItem('img') == null){
+          localStorage.setItem('img', this.user.picture);
+        }
+        if(localStorage.getItem('mail') == null){
+          localStorage.setItem('mail', this.user.email);//TODO: cambiar por id del ususario
+        }
       
     },
     logout() {
