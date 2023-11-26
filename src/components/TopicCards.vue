@@ -137,7 +137,7 @@ export default {
             this.topicService.getTopics().then((data) => {
                   this.temas = data;
                   console.log(this.temas);
-                  this.cerrarModal();
+                  // this.cerrarModal();
               });
           } catch (error) {
               console.error(error);
@@ -186,13 +186,13 @@ export default {
       // let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
       modal.show();
     },
-    cerrarModal() {
-      // Cerrar el modal
+    // cerrarModal() {
+    //   // Cerrar el modal
       
-      // eslint-disable-next-line no-undef
-      let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
-      modal.hide();
-    },
+    //   // eslint-disable-next-line no-undef
+    //   let modal = new bootstrap.Modal(this.$refs.topicFormModal.$el);
+    //   modal.hide();
+    // },
     async showAccessForm(topicId) {
       // Crear una instancia del modal AccessForm utilizando su referencia
       this.$nextTick(() => {
