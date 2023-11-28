@@ -1,12 +1,11 @@
 export default class TagService {
-
-    async getTags(id) {
-        const url = 'http://localhost:8081/api/v1/tag';
-        const token = id;
+//TODO:falta token 
+    async getTags() {
+        const url = 'http://localhost:8081/api/v1/tags';
         const options = {
             method: 'GET',
             headers: {
-                Authorization: token,
+                Authorization: 1,
                 Accept: 'application/json',
             }
         };
@@ -16,20 +15,22 @@ export default class TagService {
                 throw new Error(`HTTP error: Status: ${response.status}`);
             }
             const tags = await response.json();
-            return tags;
+            console.log("tags en service "+tags.data);
+            console.log("tags contratos"+JSON.stringify(tags.data));
+            return tags.data;
         } catch (error) {
             console.error('Error al obtener las tareas:', error);
         }
     }
-    async createTag(tag, token) {
+    async createTag(tag) {
         console.log('entro al createTask()\n'+tag);
-        const url = "http://localhost:8081/api/v1/tag";
+        const url = "http://localhost:8081/api/v1/tags";
         const options = {
             method: "POST",
             headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: token
+            Authorization: 1
             },
             body: JSON.stringify(tag)
         };
@@ -39,23 +40,25 @@ export default class TagService {
             if (!response.ok) {
                 throw new Error(`HTTP error: Status ${response.status}`);
             }
-            const data = await response.json();
-            return data;
+            const tags = await response.json();
+            console.log("se creo tag: "+tags);
+            console.log("se creo tag: "+JSON.stringify(tags.data));
+            return tags.data;
         } catch (error) {
             console.error("Error al crear una nueva tarea SV:", error);
             throw error;
         }
     }  
 
-    async updateTag(tagId, tag, token) {
+    async updateTag(tagId, tag) {
         console.log('entro al updateTask()\n'+tag+' ID'+tagId);
-        const url = `http://localhost:8081/api/v1/tag/${tagId}`;
+        const url = `http://localhost:8081/api/v1/tags/${tagId}`;
         console.log('url', url);
         const options = {
             method: "PUT",
             headers: {
             "Content-Type": "application/json",
-            Authorization: token
+            Authorization: 1
             },
             body: JSON.stringify(tag)
         };
@@ -65,23 +68,25 @@ export default class TagService {
             if (!response.ok) {
                 throw new Error(`HTTP error: Status ${response.status}`);
             }
-            const data = await response.json();
-            return data;
+            const tags = await response.json();
+            console.log("se actualizo tag: "+tags);
+            console.log("se actualizo tag: "+JSON.stringify(tags.data));
+            return tags.data;
         } catch (error) {
             console.error("Error al actualizar una nueva tarea SV:", error);
             throw error;
         }
     }
 
-    async deleteTag(tagId, token) {
-        console.log('entro al deleteTask()\n'+tagId+' ID'+token);
-        const url = `http://localhost:8081/api/v1/tag/${tagId}`;
+    async deleteTag(tagId) {
+        console.log('entro al deleteTask()\n'+tagId+' ID');
+        const url = `http://localhost:8081/api/v1/tags/${tagId}`;
         const options = {
             method: "DELETE",
             headers: {
                 "Accept": 'application/json',
                 "Content-Type": "application/json",
-                Authorization: token
+                Authorization: 1
             },
         };
         console.log('options', options);
@@ -90,11 +95,10 @@ export default class TagService {
             if (!response.ok) {
                 throw new Error(`HTTP error: Status ${response.status}`);
             }
-            const data = await response.json();
-            console.log("se elimino: "+data);
-            console.log("se elimino: "+data.message);
-            
-            return data;
+            const tags = await response.json();
+            console.log("se elimino tag: "+tags);
+            console.log("se elimino tag: "+JSON.stringify(tags.data));
+            return tags.data;
         } catch (error) {
             console.error("Error al eliminar una nueva tarea SV:", error);
             throw error;

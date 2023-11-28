@@ -1,25 +1,18 @@
 <template @abrirModalCompartir="mostrarModalCompartir">
   <div class="container mt-3" >
-      <div class="d-flex mb-4 ms-auto align-items-center">
+      <div class=" ms-auto align-items-center">
         <h2 v-if="typeTopic === 'misTemas'">Mis Temas</h2>
         <h2 v-else-if="typeTopic === 'misFavoritos'">Mis Favoritos</h2>
         <h2 v-else-if="typeTopic === 'compartidosConmigo'">Compartidos conmigo</h2>
         <h2 v-else>Temas</h2>
-        <!-- Dropdown de Bootstrap para las etiquetas -->
-        <div v-if="typeTopic !== 'compartidosConmigo'" class="d-flex dropdown ms-auto">
-        <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"> -->
-          <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton"
-            data-bs-toggle="dropdown" aria-expanded="false"
-            style="color: white; background-color: #4F2A93; border-color: #4F2A93">
-          <i class="bi bi-filter"></i> Etiquetas
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li v-for="etiqueta in etiquetas" :key="etiqueta">
-              <a class="dropdown-item" href="#" @click="seleccionarEtiqueta(etiqueta)">{{ etiqueta }}</a>
-              </li>
-          </ul>
-        </div>
+        
       </div>
+      <!-- Dropdown de Bootstrap para las etiquetas -->
+      <div class="mb-4 ms-auto align-items-center">
+        <tag-management v-if="typeTopic !== 'compartidosConmigo'" @dataFromChild="receiveDataFromChild"></tag-management>
+      
+      </div>
+            
       
       <!-- Tarjetas que se alinearán en tres columnas en pantallas medianas en adelante -->
       <div class="row">
@@ -55,6 +48,12 @@
                   <i :class="{'bi-star-fill text-danger': tema.favorite, 'bi-star': !tema.favorite}" 
                   class="bi fs-5" @click="toggleFavorite(index)"></i>
                 </div>
+                <!-- <button type="button" class="btn btn-secondary"
+                        data-bs-toggle="tooltip" data-bs-placement="top"
+                        data-bs-custom-class="custom-tooltip"
+                        data-bs-title="This top tooltip is themed via CSS variables.">
+                  Custom tooltip
+                </button> -->
               </div>
               
             </div>
@@ -79,11 +78,13 @@
 <script>
 import TopicForm from './TopicForm.vue';
 import TopicService from '../service/TopicService.js';
+import TagManagement from './TagManagement.vue';
 // import AccessForm from './AccessForm.vue';
 
 export default {
   components: {
     'topic-form': TopicForm,
+    'tag-management': TagManagement
     // 'access-form': AccessForm
   },
   props: {
@@ -171,6 +172,10 @@ export default {
       });
         
     },
+    receiveDataFromChild(data) {
+      console.log('Datos recibidos del hijo:', data);
+    },
+    
     mostrarPopupEtiquetas(tema){
       console.log("etiquetas del tema: "+tema);
     },
