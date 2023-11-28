@@ -1,45 +1,33 @@
 <template>
-  <!-- Modal Trigger -->
-  <div type="button" class="nav-link d-flex align-items-center me-2" data-bs-toggle="modal" data-bs-target="#userProfileModal" @click="handleOpenModal">
-    <img :src="user.picture" alt="Perfil" class="me-2 img-fluid rounded-circle" style="height: 35px; width: 35px; object-fit: cover;"/>
-            {{ user.name }}
-  </div>
-
-  <!-- Modal -->
-  <div class="modal fade" id="userProfileModal" tabindex="-1" aria-labelledby="userProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="userProfileModalLabel">Perfil de Usuario</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div v-if="isLoading" class="loading-indicator">Cargando...</div> <!-- Indicador de carga -->
-        <div v-else-if="profile && Object.keys(profile).length > 0" class="modal-body">
+  <div class="modal fade" id="userProfileModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Perfil de Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- <div v-if="profile && Object.keys(profile).length > 0" class="modal-body"> -->
+            <div v-if="isLoading" class="loading-indicator">Cargando...</div> <!-- Indicador de carga -->
+            <div v-else-if="profile && Object.keys(profile).length > 0" class="modal-body">
       
-        <!-- <div class="modal-body"> -->
-          <!-- <div class="d-flex justify-content-center mb-4 col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-            <img v-if="profile.img" :src="profile.img" alt="Profile Image" class="img-fluid rounded-circle" style="width: 120px;"/>
-            <img v-else src="../assets/profile_img_default.png" alt="Profile Image" class="img-fluid rounded-circle" style="width: 120px;"/>
-          </div> -->
-
-          <div class="row">
-          <!-- Columna para la imagen -->
-          <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+              <div class="row">
+                <!-- Columna para la imagen -->
+                <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
                     <br>
                   <img v-if="img" :src="img" alt="Profile Image" class="img-fluid rounded-circle" style="width: 150px;"/>
                   <img v-else src="../assets/profile_img_default.png" alt="Profile Image" class="img-fluid rounded-circle" style="width: 150px;"/>
                 </div>
-
-          <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8">
-              <hr>
-              <div class="d-flex align-items-center">
-                                          <i class="bi bi-person-circle me-2 mb-4"></i>
-                                          <div>
-                                          <strong class="d-flex">Nombre Completo:</strong>
-                                          <p class="d-flex">{{ profile.username }}</p>
-                                          </div>
-                                      </div>
-          <div class="d-flex align-items-center">
+                
+                <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                  <hr>
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-person-circle me-2 mb-4"></i>
+                      <div>
+                      <strong class="d-flex">Nombre Completo:</strong>
+                      <p class="d-flex">{{ profile.username }}</p>
+                      </div>
+                  </div>
+                  <div class="d-flex align-items-center">
                                           <i class="bi bi-envelope-at-fill me-2 mb-4"></i>
                                           <div>
                                           <strong class="d-flex">Correo Electronico</strong>
@@ -74,15 +62,13 @@
                                           <p class="d-flex">{{ formatDate(profile.createdDate) }}</p>
                                           </div>
                                       </div>
-          </div>
-          </div>
-            
-          <!-- Aquí van los demás campos del formulario ... -->
-
+                                      <!-- <hr> -->
+                </div>
+              </div>
+            </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
+  </div>  
 </template>
 
 <script>
@@ -93,10 +79,6 @@ export default {
   data() {
     return {
       isLoading: true,
-      user: {
-        name: "Fabiola Martinezz", // Reemplazar con datos dinámicos
-        picture: "https://lh3.googleusercontent.com/a/ACg8ocI1Kkm6AlnPy6NnTBACLE54M_mIf6UXffHAkdDPsbvhq4c=s96-c", // Reemplazar con datos dinámicos
-      },
       profile:{},
       img: '',
       email: '',
@@ -110,8 +92,8 @@ export default {
   userService: null,
   created() {
     this.userService = new UserService();
-    this.img = localStorage.getItem('img') || '..src/assets/profile_img_default.png';//flashcards\src\assets\profile_img_default.png
-    // this.getProfile();
+    this.img = localStorage.getItem('img') || '../assets/profile_img_default.png';
+    this.getProfile();
     // this.email = localStorage.getItem('mail') || 'example@gmail.com';
     // console.log(this.email);
   },
@@ -120,7 +102,7 @@ export default {
   // },
   async mounted(){
     if(this.isLoading){
-      // await this.getProfile();
+      await this.getProfile();
     }
   },
   methods: {
@@ -136,11 +118,7 @@ export default {
         this.isLoading = false;
       }
     },  
-    handleOpenModal() {
-      if (!this.profile || Object.keys(this.profile).length === 0) {
-        this.getProfile();
-      }
-    },
+
     formatDate(timestamp) {
       const date = new Date(timestamp);
       const day = date.getDate().toString().padStart(2, '0');

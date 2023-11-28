@@ -1,11 +1,12 @@
 
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../view/HomeView.vue';
+import HomeView from '../components/TagManagement.vue'; //../view/HomeView.vue';
 import MyTopicsView from '../view/MyTopicsView.vue';
 import FavoriteTopicsView from '../view/FavoriteTopicsView.vue';
 import SharedTopicsView from '../view/SharedTopicsView.vue';
 import AccessUserTopicView from '../view/AccessUserTopicView.vue';
-import CardsAndTest from '../components/CardsAndTest.vue';
+import CardsAndTest from '../components/CardsAndTest.vue'; //../components/TagManagement.vue'; 
+// import TagManagement from '../components/TagManagement.vue';
 
 const routes = [
     {

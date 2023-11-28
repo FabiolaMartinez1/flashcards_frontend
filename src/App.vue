@@ -27,7 +27,8 @@
             {{ user.name }}
           </div> -->
           <button class="btn-info" @click="saveImg">aqui para guardar email</button>
-          <user-profile v-if="isAuthenticated"  ref="userProfileModal" ></user-profile>
+          <!-- TODO: quitar, deberia ser por id -->
+          <user-profile v-if="isAuthenticated"  ref="userProfileModal" :username="user.name" :image="user.picture"></user-profile>
           <!-- Botón de cerrar sesión o iniciar sesión -->
           <button v-if="isAuthenticated" class="btn btn-outline-light" @click="logout">Log out</button>
           <button v-else class="btn btn-outline-light" @click="login">Log in</button>
