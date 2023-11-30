@@ -1,14 +1,15 @@
 export default class TagService {
 //TODO:falta token 
-    async getTags() {
+    async getTags(token) {
         const url = 'http://localhost:8081/api/v1/tags';
         const options = {
             method: 'GET',
             headers: {
-                Authorization: 1,
                 Accept: 'application/json',
+                Authorization: 1,//`Bearer ${token}`
             }
         };
+        console.log('token en service: '+token);
         try {
             const response = await fetch(url, options);
             if (!response.ok) {

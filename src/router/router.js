@@ -1,6 +1,6 @@
 
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../components/TagManagement.vue'; //../view/HomeView.vue';
+import HomeView from '../view/HomeView.vue';
 import MyTopicsView from '../view/MyTopicsView.vue';
 import FavoriteTopicsView from '../view/FavoriteTopicsView.vue';
 import SharedTopicsView from '../view/SharedTopicsView.vue';

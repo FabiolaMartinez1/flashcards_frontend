@@ -22,7 +22,7 @@
       <hr>
       <div class="d-flex justify-content-center">
         <button class="btn btn-outline-secondary me-4" @click="cerrarDropdown" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Cancelar</button>
-        <button class="btn btn-outline-secondary ms-4" @click="sendData" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Aceptar</button>
+        <button class="btn btn-outline-secondary ms-4" @click="cerrarDropdown" style="color: white; background-color: #4F2A93; border-color: #4F2A93">Aceptar</button>
       </div>
     </ul>
   </div>
@@ -38,6 +38,8 @@ export default{
       // etiquetas: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7', 'tag8'],
       selectedTags: [],
       token: null,
+      sub: null,
+      user: null,
     }
   },
   created() {
@@ -52,10 +54,14 @@ export default{
 
     async getTags() {
       try{
+        this.user = await this.$auth0.user;
+        this.sub = await this.user.sub;
+        console.log("sub: "+this.sub);
+
         this.token = await this.$auth0.getAccessTokenSilently();
         console.log(this.token);
 
-        this.tagService.getTags().then((data) => {
+        this.tagService.getTags(this.token).then((data) => {
           this.etiquetas = data;
           console.log("en management"+this.etiquetas);
         });
