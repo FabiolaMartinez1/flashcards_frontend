@@ -66,6 +66,8 @@
             cantidadTarjetas: 0,
             etiquetasSeleccionadas: [],
             etiquetasDisponibles: ['Etiqueta 1', 'Etiqueta 2', 'Etiqueta 3'], // Ejemplo de etiquetas disponibles
+            user: null,
+            sub: null,
         };
         },
         created(){
@@ -73,15 +75,18 @@
             this.openAIService = new OpenAIService();
         },
         methods: {
-        submitForm() {
+        async submitForm() {
+
             console.log("numero de tarjetas: "+this.cantidadTarjetas);
             // Lógica para procesar el formulario
             // console.log('Formulario datos:', this.nuevoTema, this.descripcion, this.cantidadTarjetas, this.color, this.etiquetasSeleccionadas);
             // console.log('Formulario datos:', this.title, this.description, this.cantidadTarjetas, this.color, this.etiquetasSeleccionadas);
-
+            this.user = await this.$auth0.user;
+            this.sub = await this.user.sub;
+            console.log("sub en TopicForm: "+this.sub);
             console.log("Datos en topic: "+this.topic.title + this.topic.description + this.topic.color);
             try {
-                this.topicService.createTopic(this.topic).then((data) => {
+                this.topicService.createTopic(this.topic, this.sub).then((data) => {
                     console.log(data);
                     console.log("Tema creado");
                     this.$emit('update-topics-list');

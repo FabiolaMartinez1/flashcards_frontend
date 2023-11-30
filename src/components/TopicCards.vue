@@ -122,20 +122,26 @@ export default {
       // ... más tarjetas
     ],
       etiquetas: ['Etiqueta 1', 'Etiqueta 2', 'Etiqueta 3'], // Añade aquí tus etiquetas
-      etiquetaSeleccionada: ''
+      etiquetaSeleccionada: '',
+      user: null,
+      sub: null,
     };
   },
   created(){
+    
+  },
+  async mounted() {
+      
       this.topicService = new TopicService();
-  },
-  async mounted(){
-    this.getTopics();
-    // this.$refs.TopicForm.$on('close-modal', this.cerrarModal);
-  },
+      this.getTopics();
+},
   methods: {
-    getTopics() {
+    async getTopics() {
       try {
-            this.topicService.getTopics().then((data) => {
+        this.user = await this.$auth0.user;
+        this.sub = await this.user.sub;
+        console.log("sub en topicCard: "+this.sub);
+            this.topicService.getTopics(this.sub).then((data) => {
                   this.temas = data;
                   console.log(this.temas);
                   // this.cerrarModal();
