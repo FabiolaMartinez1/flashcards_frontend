@@ -10,10 +10,6 @@
       <h5>Etiquetas <i class="bi bi-pencil-square fs-5"></i></h5>
       <hr>
       <div class="d-flex flex-wrap">
-        <!-- <li v-for="(etiqueta, index) in etiquetas" :key="index" class="me-2 mb-2">
-          <input type="checkbox" :id="etiqueta" v-model="selectedTags" :value="etiqueta" />
-          <label :for="etiqueta">{{ etiqueta }}</label>
-        </li> -->
         <li v-for="(etiqueta, index) in etiquetas" :key="index" class="me-2 mb-2">
           <input type="checkbox" :id="`tag-${index}`" v-model="selectedTags" :value="etiqueta.name" @change="sendData"/>
           <label :for="`tag-${index}`">{{ etiqueta.name }}</label>
@@ -35,7 +31,6 @@ export default{
   data: function (){
     return {
       etiquetas: [],
-      // etiquetas: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7', 'tag8'],
       selectedTags: [],
       token: null,
       sub: null,
@@ -54,14 +49,14 @@ export default{
 
     async getTags() {
       try{
-        this.user = await this.$auth0.user;
-        this.sub = await this.user.sub;
+        this.user =  this.$auth0.user;
+        this.sub =  this.user.sub;
         console.log("sub: "+this.sub);
 
-        this.token = await this.$auth0.getAccessTokenSilently();
-        console.log(this.token);
+        // this.token = await this.$auth0.getAccessTokenSilently();
+        // console.log(this.token);
 
-        this.tagService.getTags(this.token).then((data) => {
+        this.tagService.getTags(this.sub  ).then((data) => {
           this.etiquetas = data;
           console.log("en management"+this.etiquetas);
         });
