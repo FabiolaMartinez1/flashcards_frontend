@@ -1,15 +1,15 @@
 export default class TagService {
 //TODO:falta token 
-    async getTags(token) {
+    async getTags(sub) {
         const url = 'http://localhost:8081/api/v1/tags';
         const options = {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
-                Authorization: 1,//`Bearer ${token}`
+                Authorization: sub,
             }
         };
-        console.log('token en service: '+token);
+        console.log('sub en service: '+sub);
         try {
             const response = await fetch(url, options);
             if (!response.ok) {
@@ -23,7 +23,7 @@ export default class TagService {
             console.error('Error al obtener las tareas:', error);
         }
     }
-    async createTag(tag) {
+    async createTag(tag,sub) {
         console.log('entro al createTask()\n'+tag);
         const url = "http://localhost:8081/api/v1/tags";
         const options = {
@@ -31,7 +31,7 @@ export default class TagService {
             headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: 1
+            Authorization: sub
             },
             body: JSON.stringify(tag)
         };
@@ -51,7 +51,7 @@ export default class TagService {
         }
     }  
 
-    async updateTag(tagId, tag) {
+    async updateTag(tagId, tag, sub) {
         console.log('entro al updateTask()\n'+tag+' ID'+tagId);
         const url = `http://localhost:8081/api/v1/tags/${tagId}`;
         console.log('url', url);
@@ -59,7 +59,7 @@ export default class TagService {
             method: "PUT",
             headers: {
             "Content-Type": "application/json",
-            Authorization: 1
+            Authorization: sub
             },
             body: JSON.stringify(tag)
         };
@@ -79,7 +79,7 @@ export default class TagService {
         }
     }
 
-    async deleteTag(tagId) {
+    async deleteTag(tagId, sub) {
         console.log('entro al deleteTask()\n'+tagId+' ID');
         const url = `http://localhost:8081/api/v1/tags/${tagId}`;
         const options = {
@@ -87,7 +87,7 @@ export default class TagService {
             headers: {
                 "Accept": 'application/json',
                 "Content-Type": "application/json",
-                Authorization: 1
+                Authorization: sub
             },
         };
         console.log('options', options);

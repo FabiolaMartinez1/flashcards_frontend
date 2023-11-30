@@ -1,11 +1,15 @@
 export default class TopicService {
-    async getTopics() { //TODO: falta token
-        const url = `http://localhost:8081/api/v1/topics`; //?shared=${shared}&?favorite=${favorite}
+    //creamos un constructor que reciba el sub como this.authorization
+
+
+    async getTopics(token) {//FIXME poner los filtros
+        //option,// 1: todos mis temas, 2: todos los favoritos, 3: todos los compartidos
+        const url = `http://localhost:8081/api/v1/topics?option=1`; //?shared=${shared}&?favorite=${favorite}
         const options = {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
-                // Authorization: token,
+                Authorization: token
             }
         };
         try {
@@ -14,15 +18,15 @@ export default class TopicService {
                 throw new Error(`HTTP error: Status: ${response.status}`);
             }
             const topics = await response.json();
-            console.log("contratos en service "+topics.data);
-            console.log("obtuvo contratos"+JSON.stringify(topics.data));
+            console.log("topics en service "+topics.data);
+            console.log("obtuvo topics"+JSON.stringify(topics.data));
 
             return topics.data;
         } catch (error) {
             console.error('Error al obtener los temas:', error);
         }
     }
-    async createTopic(topic) {
+    async createTopic(topic, token) {
         console.log('entro al createTask()\n');
         const url = "http://localhost:8081/api/v1/topics";
         const options = {
@@ -30,7 +34,7 @@ export default class TopicService {
             headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            // Authorization: token
+            Authorization: token
             },
             body: JSON.stringify(topic)
         };
@@ -73,7 +77,7 @@ export default class TopicService {
     //         throw error;
     //     }
     // }
-    async deleteTopic(topicId) {
+    async deleteTopic(topicId, token) {
         console.log('entro al delete()\n'+topicId);
         const url = `http://localhost:8081/api/v1/topics/${topicId}`;
         const options = {
@@ -81,7 +85,7 @@ export default class TopicService {
             headers: {
                 "Accept": 'application/json',
                 "Content-Type": "application/json",
-                // Authorization: token
+                Authorization: token
             },
         };
         console.log('options', options);

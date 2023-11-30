@@ -16,13 +16,6 @@
         </div>
         <div v-if="isLoading" class="loading-indicator">Cargando...</div> <!-- Indicador de carga -->
         <div v-else-if="profile && Object.keys(profile).length > 0" class="modal-body">
-      
-        <!-- <div class="modal-body"> -->
-          <!-- <div class="d-flex justify-content-center mb-4 col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-            <img v-if="profile.img" :src="profile.img" alt="Profile Image" class="img-fluid rounded-circle" style="width: 120px;"/>
-            <img v-else src="../assets/profile_img_default.png" alt="Profile Image" class="img-fluid rounded-circle" style="width: 120px;"/>
-          </div> -->
-
           <div class="row">
           <!-- Columna para la imagen -->
           <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
@@ -92,9 +85,10 @@ export default {
     return {
       isLoading: true,
       profile:{},
-      img: '',
       email: '',
       defaultImage: defaultImage,
+      sub: null,
+      user: null,
     };
   },
   props: {
@@ -104,11 +98,8 @@ export default {
   userService: null,
   created() {
     this.userService = new UserService();
-    this.img = localStorage.getItem('img') || this.defaultImage;//TODO: cambiar por img de BDD: profile.img
+    // this.img = localStorage.getItem('img') || this.defaultImage;
   },
-  // async beforeMount(){
-  //   this.getProfile();
-  // },
   async mounted(){
     if(this.isLoading){
       // await this.getProfile();
@@ -118,7 +109,10 @@ export default {
     async getProfile() {
       this.isLoading = true;
       try {
-        const data = await this.userService.getUserProfile(localStorage.getItem('mail'));
+        this.user =  this.$auth0.user;
+        this.sub =  this.user.sub;
+        console.log("sub: "+this.sub);
+        const data = await this.userService.getUserProfile(this.sub);
         this.profile = data;
         console.log("Datos recibidos:", data);
       } catch (error) {
@@ -145,7 +139,6 @@ export default {
 
 <style>
 /* Estilos personalizados para los íconos y texto si es necesario */
-/* TODO: cambiar el color solo de los iconos de aqui */
 .user {
     font-size: 1.5rem; /* Tamaño de los íconos */
     color: #36205D; /* Color de los íconos */

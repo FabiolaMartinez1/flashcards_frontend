@@ -136,6 +136,8 @@ export default {
         usersTopics: [],
         userId: null,
         titleTopic: null,
+        user: null,
+        sub: null,
         };
     },
     created(){
@@ -169,19 +171,26 @@ export default {
                 console.error(error);
             }
         },
-        getAllByTopicId(topicId){
+        async getAllByTopicId(topicId){
             try {
-                this.userTopicService.getAllByTopicId(topicId).then((data) => {
+                this.user = await this.$auth0.user;
+                this.sub = await this.user.sub;
+                this.userTopicService.getAllByTopicId(topicId, this.sub).then((data) => {
                     this.usersTopics = data;
                     console.log(this.usersTopics);
-                    this.titleTopic = this.usersTopics.length > 0 ? this.usersTopics[0].topic.title : '';
+                    try{
+                        this.titleTopic = this.usersTopics.length > 0 ? this.usersTopics[0].topic.title : '';
                     console.log("titulo : " + this.titleTopic);
+                    }catch(error){
+                        console.log(error);
+                    }
+                    
                 });
             } catch (error) {
                 console.error(error);
             }
         },
-        findByEmail(){
+        findByEmail(){//FIXME arreglar el authorization de este endpoint
             try {
                 this.userService.findByEmailContainingIgnoreCase(this.searchText).then((data) => {
                     this.searchResults = data;
@@ -200,12 +209,14 @@ export default {
             // Oculta las opciones
             this.showResults = false;
         },
-        createAccessToTopic(){
+        async createAccessToTopic(){
             console.log("este es el id del usuario: "+this.userId);
             console.log("este es el id del nivel de acceso: "+this.selectedAccessLevelId);
             console.log("este es el id del tema: "+this.topicId);
+            this.user = await this.$auth0.user;
+                this.sub = await this.user.sub;
             try {
-                this.userTopicService.createAccessToTopic(this.topicId, this.selectedAccessLevelId, this.userId, 2).then((data) => { //FIXME cambiar el 2 por el id del usuario logueado
+                this.userTopicService.createAccessToTopic(this.topicId, this.selectedAccessLevelId, this.userId, this.sub).then((data) => { 
                     console.log(data);    
                     Swal.fire(
                             'Compartido',
@@ -213,6 +224,11 @@ export default {
                             'success'
                         );
                         this.getAllByTopicId(this.topicId);
+                        //borrando los campos
+                        this.selectedAccessLevelId = null;
+                        this.userId = null;
+                        this.searchText = null;
+                        this.showResults = false;
                     
                     console.log(this.usersTopics);
                 });
@@ -231,13 +247,15 @@ export default {
             confirmButtonText: 'Sí, eliminar'
             }).then((result) => {
             if (result.isConfirmed) {
-                this.deleteLogicAccess(userTopicId, 2);//FIXME cambiar el 2 por el id del usuario logueado
+                this.deleteLogicAccess(userTopicId);
             }
             });
         },
-        deleteLogicAccess(userTopicId, userIdHeader){
+        async deleteLogicAccess(userTopicId){
+            this.user = await this.$auth0.user;
+                this.sub = await this.user.sub;
             try {
-                this.userTopicService.deleteLogicAccess(userTopicId, userIdHeader).then((data) => {
+                this.userTopicService.deleteLogicAccess(userTopicId, this.sub).then((data) => {
                     if(data.responseCode == "F-004") {
                         Swal.fire(
                             'Eliminado',
@@ -254,9 +272,11 @@ export default {
                 console.error(error);
             }
         },
-        updateAccessLevel(userTopicId, newAccessLevelId, lastDate, favorite){
+        async updateAccessLevel(userTopicId, newAccessLevelId, lastDate, favorite){
+            this.user = await this.$auth0.user;
+            this.sub = await this.user.sub;
             try{
-                this.userTopicService.updateByUserTopicId(userTopicId, newAccessLevelId, lastDate, favorite, 2).then((data) => {//FIXME cambiar el 2 por el id del usuario logueado
+                this.userTopicService.updateByUserTopicId(userTopicId, newAccessLevelId, lastDate, favorite, this.sub).then((data) => {
                     if(data.responseCode == "F-003") {
                         Swal.fire(
                             'Actualizado',

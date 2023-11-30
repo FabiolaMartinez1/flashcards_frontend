@@ -18,16 +18,6 @@
         <!-- Perfil y botón de autenticación -->
         <div class="navbar-nav ms-auto d-flex align-items-center">
           <!-- Enlace al perfil del usuario -->
-          <!-- <router-link v-if="isAuthenticated" to="/profile" class="nav-link d-flex align-items-center me-2" @click="saveImg">
-            <img :src="user.picture" alt="Perfil" class="me-2 img-fluid rounded-circle" style="height: 35px; width: 35px; object-fit: cover;"/>
-            {{ user.name }}
-          </router-link> -->
-          <!-- <div v-if="isAuthenticated" class="nav-link d-flex align-items-center me-2" @click="viewProfileModal">
-            <img :src="user.picture" alt="Perfil" class="me-2 img-fluid rounded-circle" style="height: 35px; width: 35px; object-fit: cover;"/>
-            {{ user.name }}
-          </div> -->
-          <button class="btn-info" @click="saveImg">aqui para guardar email</button>
-          <!-- TODO: quitar, deberia ser por id -->
           <user-profile v-if="isAuthenticated"  ref="userProfileModal" :username="user.name" :image="user.picture"></user-profile>
           <!-- Botón de cerrar sesión o iniciar sesión -->
           <button v-if="isAuthenticated" class="btn btn-outline-light" @click="logout">Log out</button>
@@ -75,18 +65,17 @@ export default {
       this.$auth0.loginWithRedirect();
       //imprimir token
       console.log(this.$auth0.getTokenSilently());
-
-      if(localStorage.getItem('img') == null){
-          localStorage.setItem('img', this.user.picture);
-        }
-        if(localStorage.getItem('mail') == null){
-          localStorage.setItem('mail', this.user.email);//TODO: cambiar por id del ususario
-        }
+      // if(localStorage.getItem('img') == null){
+      //     localStorage.setItem('img', this.user.picture);
+      //   }
+      //   if(localStorage.getItem('mail') == null){
+      //     localStorage.setItem('mail', this.user.email);
+      //   }
       
     },
     logout() {
-      localStorage.removeItem('img');
-      localStorage.removeItem('mail');
+      // localStorage.removeItem('img');
+      // localStorage.removeItem('mail');
         this.$auth0.logout({ 
           logoutParams: { 
             returnTo: window.location.origin 
@@ -98,22 +87,7 @@ export default {
         console.log(this.token);
         await this.loginService.doSomethingWithToken(this.token);
       },
-      saveImg(){
-        //TODO: cambiar por imagen de la base
-        // si en el local storage no hay una imagen guardada, se guarda la imagen del usuario
-        if(localStorage.getItem('img') == null){
-          localStorage.setItem('img', this.user.picture);
-        }
-        if(localStorage.getItem('mail') == null){
-          localStorage.setItem('mail', this.user.email);//TODO: cambiar por id del ususario
-        }
-        console.log("img"+this.user.picture);
-
-        
-      },
       viewProfileModal(){
-        this.saveImg();
-
       // eslint-disable-next-line no-undef
       let modal = new bootstrap.Modal(this.$refs.userProfileModal.$el);
         modal.show();
