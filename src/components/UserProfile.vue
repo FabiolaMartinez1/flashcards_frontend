@@ -92,9 +92,10 @@ export default {
     return {
       isLoading: true,
       profile:{},
-      img: '',
       email: '',
       defaultImage: defaultImage,
+      sub: null,
+      user: null,
     };
   },
   props: {
@@ -104,11 +105,8 @@ export default {
   userService: null,
   created() {
     this.userService = new UserService();
-    this.img = localStorage.getItem('img') || this.defaultImage;//TODO: cambiar por img de BDD: profile.img
+    // this.img = localStorage.getItem('img') || this.defaultImage;
   },
-  // async beforeMount(){
-  //   this.getProfile();
-  // },
   async mounted(){
     if(this.isLoading){
       // await this.getProfile();
@@ -118,7 +116,10 @@ export default {
     async getProfile() {
       this.isLoading = true;
       try {
-        const data = await this.userService.getUserProfile(localStorage.getItem('mail'));
+        this.user =  this.$auth0.user;
+        this.sub =  this.user.sub;
+        console.log("sub: "+this.sub);
+        const data = await this.userService.getUserProfile(this.sub);
         this.profile = data;
         console.log("Datos recibidos:", data);
       } catch (error) {

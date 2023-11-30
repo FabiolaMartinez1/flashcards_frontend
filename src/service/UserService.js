@@ -1,14 +1,15 @@
 export default class UserService {
 
-    async getUserProfile(email) { //TODO: falta token
-        const url = `http://localhost:8081/api/v1/users/profile?email=${email}`; //?shared=${shared}&?favorite=${favorite}
+    async getUserProfile(sub) { 
+        const url = `http://localhost:8081/api/v1/users/profile`; //?shared=${shared}&?favorite=${favorite}
         const options = {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
-                // Authorization: token,
+                Authorization: sub,
             }
         };
+        console.log('token en service: '+sub);
         try {
             const response = await fetch(url, options);
             if (!response.ok) {
