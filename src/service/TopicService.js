@@ -77,7 +77,7 @@ export default class TopicService {
     //         throw error;
     //     }
     // }
-    async deleteTopic(topicId) {
+    async deleteTopic(topicId, token) {
         console.log('entro al delete()\n'+topicId);
         const url = `http://localhost:8081/api/v1/topics/${topicId}`;
         const options = {
@@ -85,7 +85,7 @@ export default class TopicService {
             headers: {
                 "Accept": 'application/json',
                 "Content-Type": "application/json",
-                // Authorization: token
+                Authorization: token
             },
         };
         console.log('options', options);

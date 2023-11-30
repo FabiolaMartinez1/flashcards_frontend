@@ -128,11 +128,9 @@ export default {
     };
   },
   created(){
-    
+    this.topicService = new TopicService();
   },
   async mounted() {
-      
-      this.topicService = new TopicService();
       this.getTopics();
 },
   methods: {
@@ -150,10 +148,12 @@ export default {
               console.error(error);
           }
     },
-    deleteTopic(topicId) {
+    async deleteTopic(topicId) {
       console.log(topicId);
       try {
-            this.topicService.deleteTopic(topicId).then((data) => {
+        this.user = await this.$auth0.user;
+        this.sub = await this.user.sub;
+            this.topicService.deleteTopic(topicId, this.sub).then((data) => {
                   console.log(data);
                   console.log("Tema borrada");
                   this.getTopics();
