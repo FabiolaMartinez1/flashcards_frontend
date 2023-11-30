@@ -2,14 +2,14 @@ export default class TopicService {
     //creamos un constructor que reciba el sub como this.authorization
 
 
-    async getTopics(token) { //TODO: falta token
+    async getTopics(token) {//FIXME poner los filtros
         //option,// 1: todos mis temas, 2: todos los favoritos, 3: todos los compartidos
         const url = `http://localhost:8081/api/v1/topics?option=1`; //?shared=${shared}&?favorite=${favorite}
         const options = {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
-                Authorization: token,
+                Authorization: token
             }
         };
         try {

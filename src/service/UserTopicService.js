@@ -1,11 +1,12 @@
 export default class UserTopicService {
 
-    async getAllByTopicId(topicId) { //TODO: falta token
+    async getAllByTopicId(topicId, token) { 
         const url = `http://localhost:8081/api/v1/topics/${topicId}/access`;
         const options = {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
+                Authorization: token
             }
         };
         try {
@@ -22,14 +23,13 @@ export default class UserTopicService {
             console.error('Error al obtener los usuarios con acceso:', error);
         }
     }
-    async deleteLogicAccess(userTopicId, userIdHeader){
+    async deleteLogicAccess(userTopicId, token){
         const url = `http://localhost:8081/api/v1/topics/access/${userTopicId}`;
         const options = {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
-                userIdHeader: userIdHeader
-                // Authorization: token,
+                Authorization: token
             }
         };
         try {
@@ -46,15 +46,14 @@ export default class UserTopicService {
             console.error('Error al eliminar logicamente un acceso:', error);
         }
     }
-    async createAccessToTopic(topicId, accessLevelId, userId, userIdHeader) { //TODO: falta token
+    async createAccessToTopic(topicId, accessLevelId, userId, token) {
         const url = `http://localhost:8081/api/v1/topics/access`;
         const options = {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                userIdHeader: userIdHeader
-                // Authorization: token,
+                Authorization: token
             },
             body:JSON.stringify({
                 topicId: topicId,
@@ -76,15 +75,14 @@ export default class UserTopicService {
             console.error('Error al obtener los usuarios con acceso:', error);
         }
     }
-    async updateByUserTopicId(userTopicId, accessLevelId, lastDate,favorite, userIdHeader){
+    async updateByUserTopicId(userTopicId, accessLevelId, lastDate,favorite, token){
         const url = `http://localhost:8081/api/v1/topics/access`;
         const options = {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                userIdHeader: userIdHeader
-                // Authorization: token,
+                Authorization: token
             },
             body:JSON.stringify({
                 userTopicId: userTopicId,
