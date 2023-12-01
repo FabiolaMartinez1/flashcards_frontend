@@ -2,14 +2,26 @@ export default class TopicService {
     //creamos un constructor que reciba el sub como this.authorization
 
 
-    async getTopics(token) {//FIXME poner los filtros
+    async getTopics(sub, op, fav, tagList) {//FIXME poner los filtros
+        console.log('entro al getTopics()\n'+sub+' '+op+' '+fav+' '+tagList);
         //option,// 1: todos mis temas, 2: todos los favoritos, 3: todos los compartidos
-        const url = `http://localhost:8081/api/v1/topics?option=1`; //?shared=${shared}&?favorite=${favorite}
+        // fav: 1 true; false 2=null
+        //tags: 1&tag=2... = nulll
+        const params = new URLSearchParams();
+
+        if (tagList && Array.isArray(tagList)) {
+            tagList.forEach(tag => {
+                params.append('tags', tag); // Esto añadirá cada tag como 'tags=valor'
+            });
+        }else{
+            null;
+        }
+        var url = `http://localhost:8081/api/v1/topics?option=${op}&favorite=${fav}&${params.toString()}`; //GET http://localhost:8081/api/v1/topics?option=1&favorite=1&tags=2
         const options = {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
-                Authorization: token
+                Authorization: sub
             }
         };
         try {
@@ -26,6 +38,7 @@ export default class TopicService {
             console.error('Error al obtener los temas:', error);
         }
     }
+
     async createTopic(topic, token) {
         console.log('entro al createTask()\n');
         const url = "http://localhost:8081/api/v1/topics";
