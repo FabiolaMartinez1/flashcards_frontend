@@ -5,7 +5,7 @@ import MyTopicsView from '../view/MyTopicsView.vue';
 import FavoriteTopicsView from '../view/FavoriteTopicsView.vue';
 import SharedTopicsView from '../view/SharedTopicsView.vue';
 import AccessUserTopicView from '../view/AccessUserTopicView.vue';
-import CardsAndTest from '../components/CardsAndTest.vue'; //../components/TagManagement.vue'; 
+import CardsView from '../view/CardsView.vue'; //../components/TagManagement.vue'; 
 // import TagManagement from '../components/TagManagement.vue';
 
 const routes = [
@@ -38,7 +38,7 @@ const routes = [
     {
         path: '/topics/:topicId/cards',
         name: 'ViewCards',
-        component: CardsAndTest,
+        component: CardsView,
         props: true
     },
 ];
