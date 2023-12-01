@@ -78,4 +78,84 @@ export default class FlashcardService {
             throw error;
         }
     } 
+
+    async createFlashcardIA(topicId, sub) {
+        console.log('entro al createTcreatePersonalFlashcardask()\n');
+        const url = "http://localhost:8081/api/v1/flashcards/ia";
+        const options = {
+            method: "POST",
+            headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: sub
+            },
+            body: JSON.stringify({ topicId: topicId })
+        };
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error: Status ${response.status}`);
+            }
+            const flashcard = await response.json();
+            console.log("se creo flashcard IA: "+JSON.stringify(flashcard));
+            console.log("se creo flashcard IA: "+JSON.stringify(flashcard.data));
+            return flashcard;
+        } catch (error) {
+            console.error("Error al crear una nueva tarea SV:", error);
+            throw error;
+        }
+    } 
+
+    async editPersonalFlashcard(sub, cardId, question, answer) {
+        console.log('entro al editPersonalFlashcard()\n');
+        const url = "http://localhost:8081/api/v1/flashcards";
+        const options = {
+            method: "PUT",
+            headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: sub
+            },
+            body: JSON.stringify({ cardId: cardId, question: question, answer: answer })
+        };
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error: Status ${response.status}`);
+            }
+            const flashcard = await response.json();
+            console.log("se editPersonalFlashcard flashcard personal: "+JSON.stringify(flashcard));
+            console.log("se editPersonalFlashcard flashcard personal: "+JSON.stringify(flashcard.data));
+            return flashcard;
+        } catch (error) {
+            console.error("Error al crear una nueva tarea SV:", error);
+            throw error;
+        }
+    } 
+
+    async deleteFlashcard(cardId,sub) {
+        console.log('entro al getFlashcardByCardId()'+cardId+' '+sub);
+        //  http://localhost:8081/api/v1/topics/3/flashcards ${topicId}`
+        const url = `http://localhost:8081/api/v1/flashcards/${cardId}`;
+        const options = {
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json',
+                Authorization: sub,
+            }
+        };
+        console.log('sub en service: '+sub);
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error: Status: ${response.status}`);
+            }
+            const flashcards = await response.json();
+            console.log("card en service "+JSON.stringify(flashcards));
+            console.log("card data en service"+JSON.stringify(flashcards.data));
+            return flashcards;
+        } catch (error) {
+            console.error('Error al eliminar:', error);
+        }
+    }
 }
