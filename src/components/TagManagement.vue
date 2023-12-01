@@ -4,7 +4,7 @@
     <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton"
       data-bs-toggle="dropdown" aria-expanded="false"
       style="color: white; background-color: #4F2A93; border-color: #4F2A93">
-      <i class="bi bi-filter"></i> Etiquetas
+      <i class="bi bi-filter"></i> Filtrar por Etiquetas
     </button>
     <ul class="dropdown-menu p-2 common-ul" @click.stop>
       <h5>Etiquetas 
@@ -15,7 +15,7 @@
       <hr>
       <div v-if="!flagEditableMode" class="d-flex flex-wrap" style="width: auto; padding: 1rem" >
         <li v-for="(etiqueta, index) in etiquetas" :key="index" class="me-2 mb-2 d-flex">
-          <input type="checkbox" :id="`tag-${index}`" v-model="selectedTags" :value="etiqueta.name" @change="sendData"/>
+          <input type="checkbox" :id="`tag-${index}`" v-model="selectedTags" :value="etiqueta.tagId" @change="sendData"/>
           <label :for="`tag-${index}`">{{ etiqueta.name }}</label>
         </li>
       </div>
@@ -71,6 +71,7 @@ export default{
   },
   methods: {
     sendData() {
+      console.log("selectedTags: "+this.selectedTags);
       this.$emit('dataFromChild', this.selectedTags);
     },
 
