@@ -1,10 +1,34 @@
 <template @abrirModalCompartir="mostrarModalCompartir">
   <div class="container mt-3" >
-      <div class=" ms-auto align-items-center">
-        <h2 v-if="typeTopic === 'misTemas'">Mis Temas</h2>
+      <div class=" ms-auto align-items-center d-flex justify-content-between">
+        <!-- Espacio vacío a la izquierda para centrar el título -->
+        <div v-if="typeTopic!=='compartidosConmigo'" style="width: 100px;"> <!-- Ajusta el ancho según sea necesario -->
+          <!-- Espacio vacío -->
+        </div>
+        
+        <h2 v-if="typeTopic === 'misTemas'" class="flex-grow-1 text-center">Mis Temas</h2>
         <h2 v-else-if="typeTopic === 'misFavoritos'">Mis Favoritos</h2>
         <h2 v-else-if="typeTopic === 'compartidosConmigo'">Compartidos conmigo</h2>
         <h2 v-else>Temas</h2>
+        <!-- Grupo de Botones -->
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+          <div>
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" v-model="selectedFilter" value="all" @change="applyFilter">
+            <label class="btn btn-outline-purple rounded" for="btnradio1">Todos</label>
+          </div>
+          <div v-if="typeTopic !== 'misFavoritos'">
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" v-model="selectedFilter" value="favorite" @change="applyFilter">
+            <label class="btn btn-outline-purple rounded" for="btnradio2">Mis Favoritos</label>
+          </div>
+          <div v-if="typeTopic === 'misFavoritos'">
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" v-model="selectedFilter" value="topics" @change="applyFilter">
+            <label class="btn btn-outline-purple rounded" for="btnradio3">Mis temas</label>
+          </div>
+          <div v-if="typeTopic === 'misFavoritos'">
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off" v-model="selectedFilter" value="shared" @change="applyFilter">
+            <label class="btn btn-outline-purple rounded" for="btnradio4">Compartidos</label>
+          </div>
+        </div>
         
       </div>
       <!-- Dropdown de Bootstrap para las etiquetas -->
@@ -94,6 +118,7 @@ export default {
   },
   data() {
     return {
+      selectedFilter: 'all',
       mostrarModalCompartir: false,
       temas: [
       // // Supongamos que tienes un array de objetos para cada tarjeta
@@ -126,21 +151,29 @@ export default {
       tags: [],
       user: null,
       sub: null,
+      opt: 1,
+      fav: 0,
+      tagList: [],
     };
   },
   created(){
     this.topicService = new TopicService();
+    this.opt = 1;
+    this.fav = 0;
   },
   async mounted() {
-      this.getTopics();
+    this.user = this.$auth0.user;
+    this.sub = this.user.sub;
+    await this.getTopics(this.sub,1,0,[]);
 },
   methods: {
-    async getTopics() {
+    async getTopics(sub, op, fav, tagList) {
+      console.log("sub en topicCard: "+sub+" op: "+op+" fav: "+fav+" tagList: "+tagList);
       try {
-        this.user = await this.$auth0.user;
-        this.sub = await this.user.sub;
-        console.log("sub en topicCard: "+this.sub);
-            this.topicService.getTopics(this.sub).then((data) => {
+        this.user = this.$auth0.user;
+        this.sub = this.user.sub;
+        console.log("sub en topicCard: "+this.sub);//FIXME
+            this.topicService.getTopics(sub,op, fav, tagList).then((data) => {
                   this.temas = data;
                   console.log(this.temas);
                   // this.cerrarModal();
@@ -149,6 +182,20 @@ export default {
               console.error(error);
           }
     },
+    // async getTopics() {
+    //   try {
+    //     this.user = await this.$auth0.user;
+    //     this.sub = await this.user.sub;
+    //     console.log("sub en topicCard: "+this.sub);
+    //         this.topicService.getTopics(this.sub).then((data) => {
+    //               this.temas = data;
+    //               console.log(this.temas);
+    //               // this.cerrarModal();
+    //           });
+    //       } catch (error) {
+    //           console.error(error);
+    //       }
+    // },
     async deleteTopic(topicId) {
       console.log(topicId);
       try {
@@ -166,7 +213,7 @@ export default {
     },
     ViewCards(topicId) {
       // Redirige a la página de detalles
-      this.$router.push({ name: 'ViewCards', 
+      this.$router.push({ name: 'ViewCards', //aqui
       params: { topicId: topicId } });
     },
     async compartir(topicId, topicTitle) {
@@ -179,10 +226,13 @@ export default {
       });
         
     },
-    receiveDataFromChild(data) {
-      console.log('Datos recibidos del hijo:', data);
+    receiveDataFromChild(data) {//TODO: mandar al getTopics
+      console.log('Datos recibidos del hijo:', JSON.stringify(data));
+      this.tagList = data;
+      console.log('tagList: '+this.tagList);
+      console.log("datos al get TT desde tags: "+"sub"+this.sub+"opt: "+this.opt+" fav: "+this.fav);
+      this.getTopics(this.sub, this.opt, this.fav, this.tagList);
     },
-    
     mostrarPopupEtiquetas(tema){
       console.log("etiquetas del tema: "+tema);
       console.log("etiquetas del tema: "+JSON.stringify(tema));
@@ -225,6 +275,57 @@ export default {
     seleccionarEtiqueta(etiqueta) {
       this.etiquetaSeleccionada = etiqueta;
       // Aquí puedes agregar la lógica adicional que ocurra después de seleccionar una etiqueta
+    },
+    applyFilter() {
+      console.log('Filtro seleccionado:', this.selectedFilter);
+      // this.etiquetaSeleccionada = etiqueta;
+      if(this.typeTopic=='misTemas' && this.selectedFilter==='all'){
+        this.opt = 1;
+        this.fav = 0;
+      }else if(this.typeTopic=='misTemas' && this.selectedFilter==='favorite'){
+        this.opt = 1;
+        this.fav = 1;
+      }else if(this.typeTopic=='misFavoritos' && this.selectedFilter==='all'){
+        this.opt = 2;
+        this.fav = 0;
+      }else if(this.typeTopic=='misFavoritos' && this.selectedFilter==='topics'){
+        this.opt = 1;
+        this.fav = 1;
+      }else if(this.typeTopic=='misFavoritos' && this.selectedFilter==='shared'){
+        this.opt = 3;
+        this.fav = 1;
+      }else if(this.typeTopic=='compartidosConmigo' && this.selectedFilter==='all'){
+        this.opt = 3;
+        this.fav = 0;
+      }else if(this.typeTopic=='compartidosConmigo' && this.selectedFilter==='favorite'){
+        this.opt = 3;
+        this.fav = 1;
+      }
+
+      // if(this.typeTopic==='misTemas'){
+      //   this.opt = 1;
+      // }else if(this.typeTopic==='misFavoritos'){
+      //   this.opt = 2;
+      // }else if(this.typeTopic==='compartidosConmigo'){
+      //   this.opt = 3;
+      // }
+      // if(this.selectedFilter==='all'){
+      //   this.fav = 0;
+      // }else if(this.selectedFilter==='favorite'){
+      //   this.fav = 1;
+      // }else if(this.selectedFilter==='topics'){
+      //   this.opt = 1;
+      //   this.fav = 1;
+      // }else if(this.selectedFilter==='shared'){
+      //   this.opt = 3;
+      //   this.fav = 1;
+      // }
+      console.log("datos al get TT: "+"sub"+this.sub+"opt: "+this.opt+" fav: "+this.fav);
+      this.getTopics(this.sub, this.opt, this.fav, this.tagList);
+    },
+    async getTopicsByFavorite() {
+      // Aquí puedes llamar a una función o realizar alguna acción
+      // Por ejemplo, podrías emitir un evento o realizar una llamada API
     }
   }
 };
@@ -265,5 +366,27 @@ export default {
 
   .bg-custom-color {
     background-color: rgb(208, 170, 244); /* Reemplaza con tu color personalizado */
+  }
+  /* .btn-outline-purple {
+    color: #6f42c1; Color del texto
+    border-color: #6f42c1; Color del borde
+  }
+
+  .btn-outline-purple:hover {
+    color: #fff; Color del texto al pasar el mouse
+    background-color: #6f42c1; Color de fondo al pasar el mouse
+    border-color: #6f42c1; Color del borde al pasar el mouse
+  } */
+  /*  */
+  .btn-outline-purple {
+    color: #4F2A93; /* Color del texto */
+    border-color: #7051AE; /* Color del borde */
+  }
+
+  .btn-outline-purple:hover,
+  .btn-check:checked + .btn-outline-purple {
+    color: #fff; /* Color del texto al pasar el mouse y cuando está seleccionado */
+    background-color: #4F2A93; /* Color de fondo al pasar el mouse y cuando está seleccionado */
+    border-color: #4F2A93; /* Color del borde al pasar el mouse y cuando está seleccionado */
   }
 </style>
