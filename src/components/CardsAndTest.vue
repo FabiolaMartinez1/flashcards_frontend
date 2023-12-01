@@ -52,7 +52,7 @@
         <br>
         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
           <div>
-            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" v-model="selectedFilter" value="all" @change="applyFilter">
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" @click="viewStudyMode(topicId)">
             <label class="btn btn-outline-purple rounded" for="btnradio1">Modo Estudio</label>
           </div>
           <div v-if="typeTopic !== 'misFavoritos'">
@@ -170,6 +170,11 @@ export default {
       // console.log('tagList: '+this.tagList);
       // console.log("datos al get TT desde tags: "+"sub"+this.sub+"opt: "+this.opt+" fav: "+this.fav);
       // this.getTopics(this.sub, this.opt, this.fav, this.tagList);
+    },
+    viewStudyMode(topicId) {
+      // Redirige a la página de studymode
+      this.$router.push({ name: 'ViewStudyMode', //aqui
+      params: { topicId: topicId } });
     },
   },
 };

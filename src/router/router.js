@@ -6,6 +6,7 @@ import FavoriteTopicsView from '../view/FavoriteTopicsView.vue';
 import SharedTopicsView from '../view/SharedTopicsView.vue';
 import AccessUserTopicView from '../view/AccessUserTopicView.vue';
 import CardsView from '../view/CardsView.vue'; //../components/TagManagement.vue'; 
+import StudyModeView from '../view/StudyModeView.vue';
 // import TagManagement from '../components/TagManagement.vue';
 
 const routes = [
@@ -39,6 +40,12 @@ const routes = [
         path: '/topics/:topicId/cards',
         name: 'ViewCards',
         component: CardsView,
+        props: true
+    },
+    {
+        path: '/topics/cards/:topicId/study',
+        name: 'ViewStudyMode',
+        component: StudyModeView,
         props: true
     },
 ];
