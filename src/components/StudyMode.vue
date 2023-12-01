@@ -43,7 +43,9 @@
             <div class="col-md-3">
                 <div class="card overflow-auto" style="height: 460px;">
                     <ul class="list-group">
-                        <li v-for="(flashcard, index) in flashcards" :key="flashcard.cardId" class="list-group-item" @click="setCurrentFlashcard(index)">
+                        <li v-for="(flashcard, index) in flashcards" :key="flashcard.cardId" class="list-group-item" 
+                        :class="{'active-item': currentFlashcardIndex === index}" 
+                        @click="setCurrentFlashcard(index)">
                             Pregunta #{{ index + 1 }}:{{ flashcard.front.substring(0, 15) + '...'}}
                         </li>
                         <!-- Más ítems -->
@@ -238,7 +240,13 @@ color: #90989b /*#2A5AA3; /* Color azul de Bootstrap para íconos */
         margin: 0 20px; /* Espacio alrededor de las flechas */
         cursor: pointer; /* Cursor como indicador de clic */
     }
-
+.active-item {
+    /* background-color: #007bff; Cambia al color que prefieras */
+    color: #007bff; /* Cambia al color de texto que prefieras */
+    font-weight: bold; /* Opcional: Hace el texto más grueso */
+    /* color de la letra */
+    /* Puedes agregar otros estilos según tus preferencias */
+}
   body {
     background-color: #f8fafc ; /* Un tono azulado/gris claro */
   }
