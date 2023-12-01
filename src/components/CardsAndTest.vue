@@ -213,6 +213,6 @@ export default {
   border: 2px solid #e2e8f0;
 }
 body {
-  background-color: #ffffff; /* Un tono azulado/gris claro */
+  background-color: #f8fafc ; /* Un tono azulado/gris claro */
 }
 </style>

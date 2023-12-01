@@ -52,9 +52,9 @@
                     <i class="bi bi-three-dots-vertical fs-5"></i>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#" @click.prevent="deleteTopic(tema.topicId)">Eliminar</a></li>
                     <li><a class="dropdown-item" href="#" @click.prevent="ViewCards(tema.topicId)">Ver detalles</a></li>
                     <li><a class="dropdown-item" href="#" @click.prevent="compartir(tema.topicId, tema.title)" >Compartir</a></li>
+                    <li><a class="dropdown-item" href="#" @click.prevent="deleteTopic(tema.topicId)">Eliminar</a></li>
                   </ul>
                 </div>
               </div>
