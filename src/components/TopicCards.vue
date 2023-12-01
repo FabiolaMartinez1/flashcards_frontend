@@ -1,10 +1,21 @@
 <template @abrirModalCompartir="mostrarModalCompartir">
   <div class="container mt-3" >
-      <div class=" ms-auto align-items-center">
+      <div class=" ms-auto align-items-center d-flex ">
         <h2 v-if="typeTopic === 'misTemas'">Mis Temas</h2>
         <h2 v-else-if="typeTopic === 'misFavoritos'">Mis Favoritos</h2>
         <h2 v-else-if="typeTopic === 'compartidosConmigo'">Compartidos conmigo</h2>
         <h2 v-else>Temas</h2>
+
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" v-model="selectedFilter" value="all" checked>
+            <label  class="btn btn-outline-info" for="option1">Todas</label>
+
+            <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" v-model="selectedFilter" value="pending">
+            <label class="btn btn-outline-info" for="option2">Pendientes</label>
+
+            <input type="radio" class="btn-check" name="options" id="option4" autocomplete="off" v-model="selectedFilter" value="completed">
+            <label class="btn btn-outline-info" for="option4">Completadas</label>
+        </div>
         
       </div>
       <!-- Dropdown de Bootstrap para las etiquetas -->
@@ -166,7 +177,7 @@ export default {
     },
     ViewCards(topicId) {
       // Redirige a la página de detalles
-      this.$router.push({ name: 'ViewCards', 
+      this.$router.push({ name: 'ViewCards', //aqui
       params: { topicId: topicId } });
     },
     async compartir(topicId, topicTitle) {
