@@ -158,13 +158,14 @@ export default {
   },
   created(){
     this.topicService = new TopicService();
-    this.opt = 1;
-    this.fav = 0;
+    // this.opt = 1;
+    // this.fav = 0;
   },
   async mounted() {
     this.user = this.$auth0.user;
     this.sub = this.user.sub;
-    await this.getTopics(this.sub,1,0,[]);
+    this.applyFilter();
+    // await this.getTopics(this.sub,this.op,this.fav,[]);
 },
   methods: {
     async getTopics(sub, op, fav, tagList) {
