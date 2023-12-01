@@ -32,9 +32,9 @@
                     <i class="bi bi-three-dots-vertical fs-5"></i>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Ver detalles</a></li>
                     <li><a v-if="flashcard.ai != 1" class="dropdown-item" href="#">Editar</a></li>
                     <li><a class="dropdown-item" href="#">Eliminar</a></li>
-                    <li><a class="dropdown-item" href="#">Ver detalles</a></li>
                   </ul>
                 </div>
               </div>
@@ -52,7 +52,7 @@
         <br>
         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
           <div>
-            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" v-model="selectedFilter" value="all" @change="applyFilter">
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" @click="viewStudyMode(topicId)">
             <label class="btn btn-outline-purple rounded" for="btnradio1">Modo Estudio</label>
           </div>
           <div v-if="typeTopic !== 'misFavoritos'">
@@ -171,6 +171,11 @@ export default {
       // console.log("datos al get TT desde tags: "+"sub"+this.sub+"opt: "+this.opt+" fav: "+this.fav);
       // this.getTopics(this.sub, this.opt, this.fav, this.tagList);
     },
+    viewStudyMode(topicId) {
+      // Redirige a la página de studymode
+      this.$router.push({ name: 'ViewStudyMode', //aqui
+      params: { topicId: topicId } });
+    },
   },
 };
 </script>
@@ -213,6 +218,6 @@ export default {
   border: 2px solid #e2e8f0;
 }
 body {
-  background-color: #ffffff; /* Un tono azulado/gris claro */
+  background-color: #f8fafc ; /* Un tono azulado/gris claro */
 }
 </style>
