@@ -9,7 +9,7 @@
     <h1 :style="{ marginRight: '19px' }">{{topic.title}}</h1>
     <!-- color picker -->
     <div class="d-flex">
-      <input type="color" id="topicColor" name="topicColor" v-model="selectedColor">
+      <input type="color" id="topicColor" name="topicColor" v-model="selectedColor" @change="updateColor">
     </div>
   </div>
   <p class="d-flex">{{ topic.description }}</p>
@@ -199,6 +199,21 @@ export default {
             console.log("TEMA encontrada");
             this.topic=data.data;
             this.selectedColor=this.topic.color;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async updateColor() {
+      try {
+        console.log("updateColor");
+        this.user = await this.$auth0.user;
+        this.sub = await this.user.sub;
+        const data = await this.topicService.updateTopic(this.topicId, this.selectedColor, this.sub);
+        console.log("getFlashcardByCardId Flashcard "+data.responseCode);
+        if(data.responseCode==="F-003"){
+            alert("actualizado");
+            await this.getTopicById();
         }
       } catch (error) {
         console.log(error);
