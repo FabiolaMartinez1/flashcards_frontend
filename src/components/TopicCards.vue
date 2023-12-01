@@ -70,7 +70,7 @@
                   <i class="bi bi-tags-fill me-2 fs-5" v-b-tooltip.hover title="Etiquetas" @click="mostrarPopupEtiquetas(tema)"></i>
 
                   <i :class="{'bi-star-fill text-danger': tema.favorite, 'bi-star': !tema.favorite}" 
-                  class="bi fs-5" @click="toggleFavorite(index)"></i>
+                  class="bi fs-5" @click="toggleFavorite(tema.userTopicId,tema.accessLevelId, tema.lastDate, tema.favorite)"></i>
                 </div>
                 <!-- <button type="button" class="btn btn-secondary"
                         data-bs-toggle="tooltip" data-bs-placement="top"
@@ -102,7 +102,9 @@
 <script>
 import TopicForm from './TopicForm.vue';
 import TopicService from '../service/TopicService.js';
+import UserTopicService from '../service/UserTopicService.js';
 import TagManagement from './TagManagement.vue';
+import Swal from 'sweetalert2';
 // import AccessForm from './AccessForm.vue';
 
 export default {
@@ -158,13 +160,15 @@ export default {
   },
   created(){
     this.topicService = new TopicService();
-    this.opt = 1;
-    this.fav = 0;
+    this.userTopicService = new UserTopicService();
+    // this.opt = 1;
+    // this.fav = 0;
   },
   async mounted() {
     this.user = this.$auth0.user;
     this.sub = this.user.sub;
-    await this.getTopics(this.sub,1,0,[]);
+    this.applyFilter();
+    // await this.getTopics(this.sub,this.op,this.fav,[]);
 },
   methods: {
     async getTopics(sub, op, fav, tagList) {
@@ -239,9 +243,34 @@ export default {
       this.tags = tema.tags;
       console.log("etiquetas del tema: "+this.etiquetas);
     },
-    toggleFavorite(index) {
+    async toggleFavorite(userTopicId, accessLevelId, lastDate, favorite) {
       // Cambia el estado 'favorite' del tema específico
-      this.temas[index].favorite = !this.temas[index].favorite;
+      this.user = await this.$auth0.user;
+      this.sub = await this.user.sub;
+
+      console.log("userTopicId: "+userTopicId+" accessLevelId: "+accessLevelId+" lastDate: "+lastDate+" favorite: "+favorite);
+      if(favorite == 0){
+        favorite = 1;
+      }else{
+        favorite = 0;
+      }
+            try{
+                this.userTopicService.updateFavoriteByTopicId(userTopicId, accessLevelId, lastDate, favorite, this.sub).then((data) => {
+                    if(data.responseCode == "F-003") {
+                        Swal.fire(
+                            'Actualizado',
+                            'Se ha actualizado el estado de favorito',
+                            'success'
+                        );
+                        this.getTopics(this.sub, this.opt, this.fav, this.tagList);
+                    } else {
+                        alert(data.responseMessage);
+                    }
+                    console.log(this.usersTopics);
+                });
+            } catch (error) {
+                console.error(error);
+            }
     },
     mostrarFormularioTema() {
       // Aquí abrimos el modal utilizando una referencia al componente TopicForm
