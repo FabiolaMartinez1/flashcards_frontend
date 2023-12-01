@@ -1,116 +1,81 @@
 <template>
     <div class="container mt-3">
-      <div class="row">
-        <!-- Content Cards Column -->
-        <div class="col-md-8">
-    
-    <div class="d-flex justify-content md-2">
-      <h1 :style="{ marginRight: '19px' }">StudyMode </h1>
-      <!-- color picker -->
-      <div class="d-flex">
-        <input type="color" id="topicColor" name="topicColor" v-model="selectedColor">
-      </div>
-    </div>
-    <p class="d-flex">Descripción... de mi tema... blah blah blah... blah blah blah... blah blah blah... blah blah blah... blah blah blah...</p>
-    <!-- //TODO: poner a masomenos 115 ; 110 caracteres -->
-    <!-- <tag-management @dataFromChild="receiveDataFromChild"></tag-management> -->
-    <div class="card mt-3">
-          <div class="card-body" :style="{ backgroundColor: selectedColor, borderRadius: '7px' }">
-            <div class="overflow-auto" style="height: 450px;">
-            <!-- Bucle v-for para mostrar las flashcards -->
-            <div class="card mb-3 card-style" v-for="(flashcard, index) in flashcards" :key="index">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <div class="d-flex align-items-center">
-                    <i v-if="flashcard.ai == 1" class="fas bi bi-lightbulb-fill fa-2x me-2 icon-yellow"></i>
-                    <i v-else class="fas bi bi-person-fill fa-2x me-2 icon-blue"></i>
-                    <h5 class="card-title">Card {{index+1}}: {{ flashcard.front.substring(0, 45) + '...'  }}</h5>
-  
-                  </div>
-                  <div class="dropdown">
-                    <button class="btn btn-sm btn-transparent" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="bi bi-three-dots-vertical fs-5"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                      <li><a class="dropdown-item" href="#">Ver detalles</a></li>
-                      <li><a v-if="flashcard.ai != 1" class="dropdown-item" href="#">Editar</a></li>
-                      <li><a class="dropdown-item" href="#">Eliminar</a></li>
-                    </ul>
-                  </div>
+        <div class="d-flex justify-content-between">
+            <h1><i class="fas bi bi-box-arrow-left fa-1x me-2 icon-grey" @click="viewStudyMode(topicId)"></i>Study mode</h1>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <div>
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" v-model="mode" value="study">
+                    <label class="btn btn-outline-purple rounded" for="btnradio1">Modo Estudio</label>
                 </div>
-                <p class="d-flex card-text">{{ flashcard.back.substring(0, 90) + '...'  }}</p>
-              </div>
-            </div>
-          </div>
-      </div>
-    </div>
-    </div>
-    
-        <!-- Score Section Column -->
-        <div class="col-md-4">
-          <!-- <br><br> -->
-          <br>
-          <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-            <div>
-              <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" @click.prevent="viewStudyMode(topicId)">
-              <label class="btn btn-outline-purple rounded" for="btnradio1">Modo Estudio</label>
-            </div>
-            <div v-if="typeTopic !== 'misFavoritos'">
-              <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" v-model="selectedFilter" value="favorite" @change="applyFilter">
-              <label class="btn btn-outline-purple rounded" for="btnradio2">Modo Test</label>
-            </div>
-          </div>
-          <div style="height: 32px;"> 
-            <!-- 32 Ajusta el alto según sea necesario -->
-          </div>
-  
-          <div class="card text-center">
-            <div class="card-header">
-              Modo test
-            </div>
-            <div class="card-body" style="height: 442px;">
-              <br>
-              <h4 class="card-title">Puntuación:</h4>
-              
-              <div class="progress-circle">
-          <svg viewBox="0 0 36 36" class="circular-chart">
-            <path class="circle-bg"
-              d="M18 2.0845
-                a 15.9155 15.9155 0 0 1 0 31.831
-                a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="#eee"
-              stroke-width="2.8"
-              stroke-linecap="round"
-            />
-  
-            <!-- El atributo 'stroke-dasharray' determina la longitud de la barra de progreso -->
-            <path class="circle"
-              d="M18 2.0845
-                a 15.9155 15.9155 0 0 1 0 31.831
-                a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="#000"
-              stroke-width="2.8"
-              stroke-linecap="round"
-              stroke-dasharray="70, 100"
-            />
-            <text x="18" y="20.35" class="score" text-anchor="middle" alignment-baseline="central" font-size="4" fill="#333">70</text>
-        
-          </svg>
+                <div v-if="typeTopic !== 'misFavoritos'">
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" v-model="mode" value="test" @change="applyFilter">
+                    <label class="btn btn-outline-purple rounded" for="btnradio2">Modo Test</label>
+                </div>
+                </div>
         </div>
         <br>
-        <div class="total">11/15</div>  
-        <br>
-        <h4>Correctas: #</h4>
-        <h4>Incorrectas: #</h4>
-        <span>Último vez: dd/mm/aaaa</span>
+        <div class="card mt-3">
+        <div class="card-body">
+        <div class="row">
+            <!-- Columna de contenido principal -->
+            <div class="col-md-9">
+                <div class="card border-right-plomo">
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                        <div class="card flashcard" onclick="this.querySelector('.card-content').classList.toggle('flip')">
+                            <div class="card card-content">
+                                <div class="card card-front">
+                                <h3>Front</h3>
+                                <p>This is the front of the flashcard.</p>
+                                </div>
+                                <div class="card-back">
+                                <h3>Back</h3>
+                                <p>This is the back of the flashcard.</p>
+                                </div>
+                            </div>
+                            </div>
+                    </div>
+                    </div>
+
+            </div>
+            <!-- Barra lateral -->
+            <div class="col-md-3">
+                <div class="card overflow-auto" style="height: 460px;">
+                    <ul class="list-group">
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <li class="list-group-item">Item One</li>
+                        <li class="list-group-item">Item Two</li>
+                        <!-- Más ítems -->
+                    </ul>
+                </div>
+            
+            </div>
         </div>
-        
-          </div>
+
         </div>
-      </div>
-    </div>  
+    </div>
+
+    </div> 
     
     </template>
   <script>
@@ -127,6 +92,8 @@
     },
     data() {
       return {
+        mode: 'study',
+        isFlipped: false,
         // Datos de ejemplo para las flashcards
         // flashcards: [
         //   { title: 'Card#: Nombre card 1', description: 'Descripción aquí 1' },
@@ -164,6 +131,9 @@
           console.log(error);
         }
       },
+      flipCard() {
+        this.isFlipped = !this.isFlipped;
+        },
       receiveDataFromChild(data) {//TODO: mandar al getTopics
         console.log('Datos recibidos del hijo viewCards:', JSON.stringify(data));
         // this.tagList = data;
@@ -178,8 +148,49 @@
       },
     },
   };
-  </script>
-  <style>
+</script>
+<style>
+.icon-grey{
+color: #90989b /*#2A5AA3; /* Color azul de Bootstrap para íconos */
+}
+.flashcard {
+    width: 100%;
+    height: 70%;
+    margin: 5%;
+    border: 1px solid #000;
+    border-radius: 10px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+  .card-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+  .card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border-color: #d4dcde;
+  }
+  .card-front {
+    background-color: #fff;
+  }
+  .card-back {
+    background-color: #f8f8f8;
+    transform: rotateY(180deg);
+  }
+  .flip {
+    transform: rotateY(180deg);
+  }
+  /*  */
   .icon-yellow {
     color: #ffc107; /* Color amarillo de Bootstrap para íconos */
   }
@@ -217,6 +228,14 @@
     border-radius: 15px; /* o cualquier otro valor que prefieras */
     border: 2px solid #e2e8f0;
   }
+  .border-right-plomo {
+  border-right: 5px solid #B0BEC5; /* Color plomo */
+  border-top: none;
+  border-bottom: none;
+  border-left: none;
+  height: 460px; /* Si quieres que la altura sea parte de la clase */
+}
+
   body {
     background-color: #f8fafc ; /* Un tono azulado/gris claro */
   }
