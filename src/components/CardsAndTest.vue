@@ -32,9 +32,19 @@
                     <i class="bi bi-three-dots-vertical fs-5"></i>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                    <li><a v-if="flashcard.ai != 1" class="dropdown-item" href="#">Editar</a></li>
+                    <!-- <li><a v-if="flashcard.ai != 1" class="dropdown-item" href="#">Editar</a></li> -->
+                    <li>
+                      <button v-if="flashcard.ai != 1" class="btn btn-link dropdown-item" @click="editPersonalFlashcard(flashcard.cardId)">
+                          Editar
+                      </button>
+                  </li>
                     <li><a class="dropdown-item" href="#">Eliminar</a></li>
-                    <li><a class="dropdown-item" href="#">Ver detalles</a></li>
+                    <!-- <li><a class="dropdown-item" href="#" @click="getDetailsFlashcard(flashcard.cardId)">Ver detalles</a></li> -->
+                    <li>
+                        <button class="btn btn-link dropdown-item" @click="getDetailsFlashcard(flashcard.cardId)">
+                            Ver detalles
+                        </button>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -111,14 +121,16 @@
       </div>
     </div>
   </div>  
-  
+  <FlashcardForm ref="flashcardForm" :propFromParent="propToPass" :cardId="cardId"/>
   </template>
 <script>
 import FlashcardsService from '../service/FlashcardService';
+import FlashcardForm from './FlashcardForm.vue';
 // import TagManagement from './TagManagement.vue';
 export default {
   components: {
     // 'tag-management': TagManagement
+    FlashcardForm,
   },
   props: {
     topicId: Number,
@@ -137,7 +149,9 @@ export default {
       user: null,
       sub: null,
       // topicId: 4,
-      selectedColor: '#E8E8E8' 
+      selectedColor: '#E8E8E8',
+      propToPass: null,
+      cardId: null,
     };
   },
   created() {
@@ -171,6 +185,18 @@ export default {
       // console.log("datos al get TT desde tags: "+"sub"+this.sub+"opt: "+this.opt+" fav: "+this.fav);
       // this.getTopics(this.sub, this.opt, this.fav, this.tagList);
     },
+    getDetailsFlashcard(cardId) {
+            this.propToPass="Ver detalles";
+            this.cardId=cardId;
+            console.log("propToPass en HomePage: " + this.propToPass);
+            this.$refs.flashcardForm.mostrarModal();
+        },
+    editPersonalFlashcard(cardId) {
+            this.propToPass="Editar";
+            this.cardId=cardId;
+            console.log("propToPass en HomePage: " + this.propToPass);
+            this.$refs.flashcardForm.mostrarModal();
+        },
   },
 };
 </script>

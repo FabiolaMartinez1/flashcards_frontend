@@ -26,6 +26,32 @@ export default class FlashcardService {
         }
     }
 
+    async getFlashcardByCardId(cardId,sub) {
+        console.log('entro al getFlashcardByCardId()'+cardId+' '+sub);
+        //  http://localhost:8081/api/v1/topics/3/flashcards ${topicId}`
+        const url = `http://localhost:8081/api/v1/flashcards/${cardId}`;
+        const options = {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                Authorization: sub,
+            }
+        };
+        console.log('sub en service: '+sub);
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error: Status: ${response.status}`);
+            }
+            const flashcards = await response.json();
+            console.log("card en service "+JSON.stringify(flashcards));
+            console.log("card data en service"+JSON.stringify(flashcards.data));
+            return flashcards;
+        } catch (error) {
+            console.error('Error al obtener las tareas:', error);
+        }
+    }
+
     async createPersonalFlashcard(sub, topicId, question, answer) {
         console.log('entro al createTcreatePersonalFlashcardask()\n');
         const url = "http://localhost:8081/api/v1/flashcards/personal";
