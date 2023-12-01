@@ -113,19 +113,26 @@ export default{
         confirmButtonColor: "#4F2A93",
         cancelButtonColor: "#4F2A93",
         confirmButtonText: "Yes, delete it!"
-      }).then((result) => {
+      }).then(async (result) => { // Utiliza una función async anónima aquí
         if (result.isConfirmed) {
-          const data = this.tagService.deleteTag(id, this.sub);
-          console.log("deleteTag"+data.responseCode);
-          //TODO: validar el estado de la respuesta
-          console.log("en deleteTag"+data.data);
-          this.getTags();
-          // Swal.fire({
-          //   title: "Deleted!",
-          //   text: "Your file has been deleted.",
-          //   icon: "success"
-          // });
+          try {
+            const data = await this.tagService.deleteTag(id, this.sub);
+            console.log("deleteTag" + data.responseCode);
+            //TODO: validar el estado de la respuesta
+            console.log("en deleteTag" + data.data);
+            this.getTags();
+            // Aquí puedes incluir la lógica para mostrar el SweetAlert de éxito
+          } catch (error) {
+            console.error("Error al eliminar la etiqueta:", error);
+            // Aquí puedes incluir la lógica para mostrar un mensaje de error
+          }
         }
+      }).finally(() => {
+        // Volver a enfocar el combo aquí TT no da //FIXME
+        // let dropdown = document.getElementById('dropdownMenuButton').focus();
+        // dropdown.click();
+        // this.flagEditableMode = true;
+        // document.getElementById("dropdownMenuButton").focus();
       });
       // this.etiquetas.splice(index, 1);
 

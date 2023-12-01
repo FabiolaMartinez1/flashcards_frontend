@@ -98,7 +98,6 @@ export default class TagService {
             }
             const tags = await response.json();
             console.log("se elimino tag: "+JSON.stringify(tags));
-            console.log("se elimino tag: "+JSON.stringify(tags.data));
             return tags;
         } catch (error) {
             console.error("Error al eliminar una nueva tarea SV:", error);
