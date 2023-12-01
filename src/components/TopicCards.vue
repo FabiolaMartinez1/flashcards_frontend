@@ -208,7 +208,7 @@ export default {
             this.topicService.deleteTopic(topicId, this.sub).then((data) => {
                   console.log(data);
                   console.log("Tema borrada");
-                  this.getTopics();
+                  this.applyFilter();
               });
               
           } catch (error) {

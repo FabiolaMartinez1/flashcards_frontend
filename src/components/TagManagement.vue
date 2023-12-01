@@ -4,7 +4,7 @@
     <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton"
       data-bs-toggle="dropdown" aria-expanded="false"
       style="color: white; background-color: #4F2A93; border-color: #4F2A93">
-      <i class="bi bi-filter"></i> Filtrar por Etiquetas
+      <i class="bi bi-filter"></i> Ver Etiquetas
     </button>
     <ul class="dropdown-menu p-2 common-ul" @click.stop>
       <h5>Etiquetas 

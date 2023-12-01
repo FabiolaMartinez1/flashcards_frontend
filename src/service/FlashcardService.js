@@ -1,7 +1,9 @@
 export default class FlashcardService {
 
-    async getTags(sub) {
-        const url = 'http://localhost:8081/api/v1/tags';
+    async getFlashcards(topicId,sub) {
+        console.log('entro al getFlashcards()'+topicId+' '+sub);
+        //  http://localhost:8081/api/v1/topics/3/flashcards ${topicId}`
+        const url = `http://localhost:8081/api/v1/topics/${topicId}/flashcards`;
         const options = {
             method: 'GET',
             headers: {
@@ -15,10 +17,10 @@ export default class FlashcardService {
             if (!response.ok) {
                 throw new Error(`HTTP error: Status: ${response.status}`);
             }
-            const tags = await response.json();
-            console.log("tags en service "+JSON.stringify(tags));
-            console.log("tags data en service"+JSON.stringify(tags.data));
-            return tags;
+            const flashcards = await response.json();
+            console.log("tags en service "+JSON.stringify(flashcards));
+            console.log("tags data en service"+JSON.stringify(flashcards.data));
+            return flashcards;
         } catch (error) {
             console.error('Error al obtener las tareas:', error);
         }
