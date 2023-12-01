@@ -32,9 +32,9 @@
                     <i class="bi bi-three-dots-vertical fs-5"></i>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Ver detalles</a></li>
                     <li><a v-if="flashcard.ai != 1" class="dropdown-item" href="#">Editar</a></li>
                     <li><a class="dropdown-item" href="#">Eliminar</a></li>
-                    <li><a class="dropdown-item" href="#">Ver detalles</a></li>
                   </ul>
                 </div>
               </div>
