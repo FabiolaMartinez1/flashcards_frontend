@@ -4,21 +4,21 @@
       <!-- Content Cards Column -->
       <div class="col-md-8">
   
-  <div class="d-flex justify-content-between">
-    <h1>Título del tema</h1>
+  <div class="d-flex justify-content md-2">
+    <h1 :style="{ marginRight: '19px' }">Título del tema</h1>
     <!-- color picker -->
-    <div>
-      <i class="bi bi-palette-fill">aaaa</i>
-      <input type="color" id="favcolor" name="favcolor" value="#ff0000">
+    <div class="d-flex">
+      <input type="color" id="topicColor" name="topicColor" v-model="selectedColor">
     </div>
   </div>
-  
-  <p class="d-flex">Descripción... de mi tema...</p>
-  <div class="card">
-        <div class="card-body">
+  <p class="d-flex">Descripción... de mi tema... blah blah blah... blah blah blah... blah blah blah... blah blah blah... blah blah blah...</p>
+  <!-- //TODO: poner a masomenos 115 ; 110 caracteres -->
+  <!-- <tag-management @dataFromChild="receiveDataFromChild"></tag-management> -->
+  <div class="card mt-3">
+        <div class="card-body" :style="{ backgroundColor: selectedColor, borderRadius: '7px' }">
           <div class="overflow-auto" style="height: 450px;">
           <!-- Bucle v-for para mostrar las flashcards -->
-          <div class="card mb-3" v-for="(flashcard, index) in flashcards" :key="index">
+          <div class="card mb-3 card-style" v-for="(flashcard, index) in flashcards" :key="index">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <div class="d-flex align-items-center">
@@ -48,14 +48,27 @@
   
       <!-- Score Section Column -->
       <div class="col-md-4">
-        <div style="height: 94px;"> <!-- Ajusta el alto según sea necesario -->
-          <!-- Espacio vacío -->
+        <!-- <br><br> -->
+        <br>
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+          <div>
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" v-model="selectedFilter" value="all" @change="applyFilter">
+            <label class="btn btn-outline-purple rounded" for="btnradio1">Modo Estudio</label>
+          </div>
+          <div v-if="typeTopic !== 'misFavoritos'">
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" v-model="selectedFilter" value="favorite" @change="applyFilter">
+            <label class="btn btn-outline-purple rounded" for="btnradio2">Modo Test</label>
+          </div>
         </div>
+        <div style="height: 32px;"> 
+          <!-- 32 Ajusta el alto según sea necesario -->
+        </div>
+
         <div class="card text-center">
           <div class="card-header">
             Modo test
           </div>
-          <div class="card-body" style="height: 440px;">
+          <div class="card-body" style="height: 442px;">
             <br>
             <h4 class="card-title">Puntuación:</h4>
             
@@ -102,7 +115,16 @@
   </template>
 <script>
 import FlashcardsService from '../service/FlashcardService';
+// import TagManagement from './TagManagement.vue';
 export default {
+  components: {
+    // 'tag-management': TagManagement
+  },
+  props: {
+    topicId: Number,
+  // shared: Boolean
+  // favorite: Boolean
+  },
   data() {
     return {
       // Datos de ejemplo para las flashcards
@@ -114,7 +136,8 @@ export default {
       flashcards: [],
       user: null,
       sub: null,
-      topicId: null,
+      // topicId: 4,
+      selectedColor: '#E8E8E8' 
     };
   },
   created() {
@@ -123,6 +146,7 @@ export default {
     this.sub = this.user.sub;
     console.log("sub en topicCard: "+this.sub);
     this.getFlashcards();
+    console.log("topicId en topicCard: "+this.topicId);
   },
   methods: {
     async getFlashcards() {
@@ -130,7 +154,7 @@ export default {
         this.user =  this.$auth0.user;
         this.sub =  this.user.sub;
         console.log("sub: "+this.sub);
-        const data = await this.flashcardsService.getFlashcards(3,this.sub);
+        const data = await this.flashcardsService.getFlashcards(this.topicId,this.sub);
         //TODO: validar el estado de la respuesta
         console.log("getFlashcards: "+data.responseCode);
         console.log("getFlashcards: "+data.data);
@@ -139,6 +163,13 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    receiveDataFromChild(data) {//TODO: mandar al getTopics
+      console.log('Datos recibidos del hijo viewCards:', JSON.stringify(data));
+      // this.tagList = data;
+      // console.log('tagList: '+this.tagList);
+      // console.log("datos al get TT desde tags: "+"sub"+this.sub+"opt: "+this.opt+" fav: "+this.fav);
+      // this.getTopics(this.sub, this.opt, this.fav, this.tagList);
     },
   },
 };
@@ -176,5 +207,12 @@ export default {
 .total {
   font-size: 1.2em;
   color: #666;
+}
+.card-style {
+  border-radius: 15px; /* o cualquier otro valor que prefieras */
+  border: 2px solid #e2e8f0;
+}
+body {
+  background-color: #ffffff; /* Un tono azulado/gris claro */
 }
 </style>
