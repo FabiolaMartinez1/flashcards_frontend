@@ -28,8 +28,9 @@
         </li>
         <li class="d-flex align-items-center">
           <input class="form-control form-control editable" 
-            v-model="newTagName" @keyup.enter="addTag" @blur="isAddingTag = false"
+            v-model="newTagName" @keyup.enter="addTag" 
           />
+          <!-- @blur="isAddingTag = false" -->
           <!-- icono add -->
           <i class="fas fa-plus-circle  icon" @click="addTag"></i>
           
@@ -63,7 +64,9 @@ export default{
   created() {
     this.tagService = new TagService();
     this.getTags();
-    
+    // this.user = this.$auth0.user;
+    // this.sub = this.user.sub;
+    // console.log("sub en topicCard: "+this.sub);
   },
   methods: {
     sendData() {
@@ -75,24 +78,27 @@ export default{
         this.user =  this.$auth0.user;
         this.sub =  this.user.sub;
         console.log("sub: "+this.sub);
-
-        // this.token = await this.$auth0.getAccessTokenSilently();
-        // console.log(this.token);
-
-        this.tagService.getTags(this.sub  ).then((data) => {
-          this.etiquetas = data;
-          console.log("en management"+this.etiquetas);
-        });
+        const data = await this.tagService.getTags(this.sub);
+        //TODO: validar el estado de la respuesta
+        console.log("getTag: "+data.responseCode);
+        this.etiquetas = data.data;
+        console.log("en management"+this.etiquetas);
       } catch (error) {
         console.log(error);
       }
 
     },
-    addTag() {
+    async addTag() {
       if (this.newTagName.trim()) {
-        this.etiquetas.push({ name: this.newTagName });
+        console.log("nueva etiqueta: "+this.newTagName);
+        const newtag = this.newTagName;
         this.newTagName = '';
-        this.isAddingTag = false;
+        const data = await this.tagService.createTag(newtag, this.sub);
+        console.log("postTag"+data.responseCode);
+        //TODO: validar el estado de la respuesta
+        console.log("en addTag"+data.data);
+        this.getTags();
+        // this.isAddingTag = false;
         // Aquí puedes incluir lógica adicional, como enviar la nueva etiqueta al servidor
       }
     },
