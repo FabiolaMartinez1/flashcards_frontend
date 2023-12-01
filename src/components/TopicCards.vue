@@ -92,7 +92,7 @@
 
       <!-- Componente modal de formulario de tema -->
       <!-- <topic-form ref="topicFormModal"></topic-form> -->
-      <topic-form v-if="typeTopic === 'misTemas'" ref="topicFormModal" @update-topics-list="getTopics"></topic-form>
+      <topic-form v-if="typeTopic === 'misTemas'" ref="topicFormModal" @update-topics-list="applyFilter"></topic-form>
 
       
 
