@@ -88,7 +88,40 @@ export default class UserTopicService {
                 userTopicId: userTopicId,
                 accessLevelId: accessLevelId,
                 lastDate: lastDate,
-                favorite: favorite
+                favorite: favorite,
+                root: false
+            })
+        };
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error: Status: ${response.status}`);
+            }
+            const updated = await response.json();
+            console.log(`se actualizó correctamente el acceso para el usuario`+updated);
+            console.log("confirmando actualizacion data:"+JSON.stringify(updated.data));
+
+            return updated;
+        } catch (error) {
+            console.error('Error al actualizar un acceso:', error);
+        }
+    }
+
+    async updateFavoriteByTopicId(userTopicId, accessLevelId, lastDate,favorite, token){
+        const url = `http://localhost:8081/api/v1/topics/access`;
+        const options = {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: token
+            },
+            body:JSON.stringify({
+                userTopicId: userTopicId,
+                accessLevelId: accessLevelId,
+                lastDate: lastDate,
+                favorite: favorite,
+                root: true
             })
         };
         try {
