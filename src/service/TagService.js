@@ -16,9 +16,9 @@ export default class TagService {
                 throw new Error(`HTTP error: Status: ${response.status}`);
             }
             const tags = await response.json();
-            console.log("tags en service "+tags.data);
-            console.log("tags contratos"+JSON.stringify(tags.data));
-            return tags.data;
+            console.log("tags en service "+JSON.stringify(tags));
+            console.log("tags data en service"+JSON.stringify(tags.data));
+            return tags;
         } catch (error) {
             console.error('Error al obtener las tareas:', error);
         }
@@ -33,7 +33,7 @@ export default class TagService {
             "Content-Type": "application/json",
             Authorization: sub
             },
-            body: JSON.stringify(tag)
+            body: JSON.stringify({ name: tag })
         };
         console.log('options', options);
         try {
@@ -42,9 +42,9 @@ export default class TagService {
                 throw new Error(`HTTP error: Status ${response.status}`);
             }
             const tags = await response.json();
-            console.log("se creo tag: "+tags);
+            console.log("se creo tag: "+JSON.stringify(tags));
             console.log("se creo tag: "+JSON.stringify(tags.data));
-            return tags.data;
+            return tags;
         } catch (error) {
             console.error("Error al crear una nueva tarea SV:", error);
             throw error;
@@ -61,7 +61,7 @@ export default class TagService {
             "Content-Type": "application/json",
             Authorization: sub
             },
-            body: JSON.stringify(tag)
+            body: JSON.stringify({ name: tag })
         };
         console.log('options', options);
         try {
@@ -70,9 +70,9 @@ export default class TagService {
                 throw new Error(`HTTP error: Status ${response.status}`);
             }
             const tags = await response.json();
-            console.log("se actualizo tag: "+tags);
+            console.log("se actualizo tag: "+JSON.stringify(tags));
             console.log("se actualizo tag: "+JSON.stringify(tags.data));
-            return tags.data;
+            return tags;
         } catch (error) {
             console.error("Error al actualizar una nueva tarea SV:", error);
             throw error;
@@ -97,9 +97,8 @@ export default class TagService {
                 throw new Error(`HTTP error: Status ${response.status}`);
             }
             const tags = await response.json();
-            console.log("se elimino tag: "+tags);
-            console.log("se elimino tag: "+JSON.stringify(tags.data));
-            return tags.data;
+            console.log("se elimino tag: "+JSON.stringify(tags));
+            return tags;
         } catch (error) {
             console.error("Error al eliminar una nueva tarea SV:", error);
             throw error;

@@ -123,6 +123,7 @@ export default {
     ],
       etiquetas: ['Etiqueta 1', 'Etiqueta 2', 'Etiqueta 3'], // Añade aquí tus etiquetas
       etiquetaSeleccionada: '',
+      tags: [],
       user: null,
       sub: null,
     };
@@ -184,6 +185,9 @@ export default {
     
     mostrarPopupEtiquetas(tema){
       console.log("etiquetas del tema: "+tema);
+      console.log("etiquetas del tema: "+JSON.stringify(tema));
+      this.tags = tema.tags;
+      console.log("etiquetas del tema: "+this.etiquetas);
     },
     toggleFavorite(index) {
       // Cambia el estado 'favorite' del tema específico
