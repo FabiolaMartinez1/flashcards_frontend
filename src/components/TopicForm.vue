@@ -48,6 +48,7 @@
     
     import TopicService from '../service/TopicService.js';
     import OpenAIService from '../service/OpenAIService.js';
+    import FlashcardService from '../service/FlashcardService';
     export default {
         data() {
         return {
@@ -73,6 +74,7 @@
         created(){
             this.topicService = new TopicService();
             this.openAIService = new OpenAIService();
+            this.flashcardService = new FlashcardService();
         },
         methods: {
         async submitForm() {
@@ -86,43 +88,46 @@
             console.log("sub en TopicForm: "+this.sub);
             console.log("Datos en topic: "+this.topic.title + this.topic.description + this.topic.color);
             try {
-                this.topicService.createTopic(this.topic, this.sub).then((data) => {
+                const data= await this.topicService.createTopic(this.topic, this.sub);
                     console.log(data);
                     console.log("Tema creado");
+                    // console.log("topicId: "+data.data.topicId);
+                    const newTopicId = data.data.topicId;
+                    console.log("topicId: "+newTopicId);
                     this.$emit('update-topics-list');
-                });
-                
-                this.createCards(this.cantidadTarjetas, this.topic.title, this.topic.description);
-            } catch (error) {
+                    this.createCards(this.cantidadTarjetas, newTopicId);
+                } catch (error) {
                 console.error(error);
             }
             this.$emit('close');
             },
 
         //funcion con un for para llamar a la funcion de crear tarjetas por cada cantidad de tarjeta
-        async createCards(cantTarjetas, title, description){
-            console.info("createcards Creando tarjetas...");
-            const age=15;
-            const grade = "Estudiante de secundaria";
-            try {
-                // const data = await this.userService.getUserProfile(localStorage.getItem('mail'));
-                // this.profile = data;
-                // console.log("Datos recibidos para card:", data);
-                // console.log("Datos recibidos para card:", this.profile);
-            } catch (error) {
-                //profile por default
-                // this.profile = {
-                //     id: 1,
-                //     name: 'Nombre de usuario',
-                //     topics: 0,
-                //     createdDate: '2021-10-10',
-                // };
-                console.log(error);
-            }
+        async createCards(cantTarjetas, newTopicId){
+            console.info("createcards Creando tarjetas..."+cantTarjetas+" "+newTopicId);
+            // const age=15;
+            // const grade = "Estudiante de secundaria";
+            // try {
+            //     // const data = await this.userService.getUserProfile(localStorage.getItem('mail'));
+            //     // this.profile = data;
+            //     // console.log("Datos recibidos para card:", data);
+            //     // console.log("Datos recibidos para card:", this.profile);
+            // } catch (error) {
+            //     //profile por default
+            //     // this.profile = {
+            //     //     id: 1,
+            //     //     name: 'Nombre de usuario',
+            //     //     topics: 0,
+            //     //     createdDate: '2021-10-10',
+            //     // };
+            //     console.log(error);
+            // }
         
             for (let i = 0; i < cantTarjetas; i++) {
                 console.log("for"+i);
-                this.createCard(title, description, grade, age);
+                // this.createCard(title, description, grade, age);
+                const data = await this.flashcardService.createFlashcardIA(newTopicId, this.sub);
+                console.log(data);
             }
         },
         //funcion para crear tarjetas
