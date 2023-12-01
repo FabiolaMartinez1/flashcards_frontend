@@ -22,9 +22,9 @@
 
       <div v-if="flagEditableMode" class="d-flex flex-wrap" style="width: auto; padding: 1rem" >
         <li v-for="(etiqueta, index) in etiquetas" :key="index" class="d-flex align-items-center">
-          <input class="form-control form-control editable" :value="etiqueta.name" @keyup.enter="updateTag(index, $event.target.value)" />
+          <input class="form-control form-control editable" :value="etiqueta.name" @keyup.enter="updateTag(index,etiqueta.tagId, $event.target.value)" @input="updateTag(index, etiqueta.tagId, $event.target.value)"/>
           <i class="fas fa-pen icon edit-icon" @click="enableEditing(index)"></i>
-          <i class="fas fa-trash icon delete-icon" @click="deleteTag(index)"></i>
+          <i class="fas fa-trash icon delete-icon" @click="deleteTag(index,etiqueta.tagId)"></i>
         </li>
         <li class="d-flex align-items-center">
           <input class="form-control form-control editable" 
@@ -48,6 +48,7 @@
 
 <script>
 import TagService from '../service/TagService';
+import Swal from 'sweetalert2';
 
 export default{
   data: function (){
@@ -102,8 +103,32 @@ export default{
         // Aquí puedes incluir lógica adicional, como enviar la nueva etiqueta al servidor
       }
     },
-    deleteTag(index) {
-      this.etiquetas.splice(index, 1);
+    deleteTag(index, id) {
+      console.log("etiqueta a eliminar: "+id+index);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#4F2A93",
+        cancelButtonColor: "#4F2A93",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const data = this.tagService.deleteTag(id, this.sub);
+          console.log("deleteTag"+data.responseCode);
+          //TODO: validar el estado de la respuesta
+          console.log("en deleteTag"+data.data);
+          this.getTags();
+          // Swal.fire({
+          //   title: "Deleted!",
+          //   text: "Your file has been deleted.",
+          //   icon: "success"
+          // });
+        }
+      });
+      // this.etiquetas.splice(index, 1);
+
       // Aquí puedes incluir lógica adicional, como eliminar la etiqueta del servidor
     },
     enableEditing(index) {
@@ -112,8 +137,14 @@ export default{
         input.focus();
       });
     },
-    updateTag(index, value) {
+    updateTag(index, id, value) {
       this.etiquetas[index].name = value;
+      console.log("etiqueta a actualizar: "+id+" "+value+" "+this.sub);
+      const data = this.tagService.updateTag(id, value, this.sub);
+      console.log("updateTag"+data.responseCode);
+      //TODO: validar el estado de la respuesta
+      console.log("en updateTag"+data.data);
+      // this.getTags();
       // Aquí puedes incluir lógica adicional, como actualizar la etiqueta en el servidor
     },
     cerrarDropdown(event) {
@@ -212,4 +243,12 @@ export default{
 .label{
   word-break: break-word;
 }
+.swal2-confirm {
+  background-color: #4F2A93; /* Color de fondo del botón de confirmación */
+}
+
+.swal2-cancel {
+  background-color: #4F2A93; /* Color de fondo del botón de cancelación */
+}
+
 </style>
