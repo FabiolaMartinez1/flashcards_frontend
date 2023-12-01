@@ -65,6 +65,30 @@ export default class TopicService {
             throw error;
         }
     }  
+    async getTopicById(topicId, token) {
+        console.log('entro al createTask()\n');
+        const url =  `http://localhost:8081/api/v1/topics/${topicId} `;
+        const options = {
+            method: "GET",
+            headers: {
+            Accept: "application/json",
+            Authorization: token
+            },
+        };
+        console.log('options', options);
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error: Status ${response.status}`);
+            }
+            const data = await response.json();
+            // router.push({ name: 'TaskList' });
+            return data;
+        } catch (error) {
+            console.error("Error al crear una nuevo tema SV:", error);
+            throw error;
+        }
+    }  
     // async updateTask() {
     //     console.log('entro al updateTask()\n'+task+' ID'+taskId);
     //     const url = `http://localhost:8081/api/v1/task/${taskId}`;

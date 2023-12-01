@@ -1,20 +1,21 @@
 <template>
-  <div class="container mt-3">
+  
+  <div class="container mt-3" ref="cardsAndTestComponent">
     <div class="row">
       <!-- Content Cards Column -->
       <div class="col-md-8">
   
   <div class="d-flex justify-content md-2">
-    <h1 :style="{ marginRight: '19px' }">Título del tema</h1>
+    <h1 :style="{ marginRight: '19px' }">{{topic.title}}</h1>
     <!-- color picker -->
     <div class="d-flex">
       <input type="color" id="topicColor" name="topicColor" v-model="selectedColor">
     </div>
   </div>
-  <p class="d-flex">Descripción... de mi tema... blah blah blah... blah blah blah... blah blah blah... blah blah blah... blah blah blah...</p>
+  <p class="d-flex">{{ topic.description }}</p>
   <!-- //TODO: poner a masomenos 115 ; 110 caracteres -->
   <!-- <tag-management @dataFromChild="receiveDataFromChild"></tag-management> -->
-  <div class="card mt-3">
+  <div class="card mt-3" @update-flashcards-list="getFlashcards">
         <div class="card-body" :style="{ backgroundColor: selectedColor, borderRadius: '7px' }">
           <div class="overflow-auto" style="height: 450px;">
           <!-- Bucle v-for para mostrar las flashcards -->
@@ -32,9 +33,23 @@
                     <i class="bi bi-three-dots-vertical fs-5"></i>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#">Ver detalles</a></li>
-                    <li><a v-if="flashcard.ai != 1" class="dropdown-item" href="#">Editar</a></li>
-                    <li><a class="dropdown-item" href="#">Eliminar</a></li>
+                    <!-- <li><a class="dropdown-item" href="#">Ver detalles</a></li> -->
+                    <!-- <li><a v-if="flashcard.ai != 1" class="dropdown-item" href="#">Editar</a></li> -->
+                    <li>
+                        <button class="btn btn-link dropdown-item" @click="getDetailsFlashcard(flashcard.cardId)">
+                            Ver detalles
+                        </button>
+                    </li>
+                    <li>
+                        <button v-if="flashcard.ai != 1" class="btn btn-link dropdown-item" @click="editPersonalFlashcard(flashcard.cardId)">
+                            Editar
+                        </button>
+                    </li>
+                    <li>
+                        <button class="btn btn-link dropdown-item" @click="deleteFlashcard(flashcard.cardId)">
+                            Eliminar
+                        </button>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -110,15 +125,28 @@
         </div>
       </div>
     </div>
-  </div>  
-  
+    
+  </div> 
+  <div class="btn-group dropup">
+  <button type="button" class="floating-button" data-bs-toggle="dropdown" aria-expanded="false" @click="toggleDropdown">+</button>
+  <ul class="dropdown-menu">
+    <li><button class="btn btn-link dropdown-item" @click="createFlashcardIA()">Con IA</button></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><button class="btn btn-link dropdown-item" @click="createPersonalFlashcard()">Mi propia card</button></li>
+  </ul>
+</div>
+
+  <FlashcardForm ref="flashcardForm" :propFromParent="propToPass" :cardId="cardId" :topicId="topicRootId"/>
   </template>
 <script>
 import FlashcardsService from '../service/FlashcardService';
+import TopicService from '../service/TopicService';
+import FlashcardForm from './FlashcardForm.vue';
 // import TagManagement from './TagManagement.vue';
 export default {
   components: {
     // 'tag-management': TagManagement
+    FlashcardForm,
   },
   props: {
     topicId: Number,
@@ -137,18 +165,45 @@ export default {
       user: null,
       sub: null,
       // topicId: 4,
-      selectedColor: '#E8E8E8' 
+      selectedColor: '#E8E8E8',
+      propToPass: null,
+      cardId: null,
+      showDropdown: true,
+      topicRootId: null,
+      topic: [],
     };
   },
   created() {
     this.flashcardsService = new FlashcardsService();
+    this.topicService = new TopicService();
     this.user = this.$auth0.user;
     this.sub = this.user.sub;
     console.log("sub en topicCard: "+this.sub);
     this.getFlashcards();
     console.log("topicId en topicCard: "+this.topicId);
   },
+  mounted() {
+    console.log('TopicCard.vue mounted');
+    this.getTopicById();
+    // this.$on('update-flashcards-list', this.getFlashcards);
+  },
   methods: {
+    async getTopicById() {
+      try {
+        console.log("getTopicById");
+        this.user = await this.$auth0.user;
+        this.sub = await this.user.sub;
+        const data = await this.topicService.getTopicById(this.topicId, this.sub);
+        console.log("getFlashcardByCardId Flashcard "+data.responseCode);
+        if(data.responseCode==="F-002"){
+            console.log("TEMA encontrada");
+            this.topic=data.data;
+            this.selectedColor=this.topic.color;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async getFlashcards() {
       try{
         this.user =  this.$auth0.user;
@@ -171,11 +226,71 @@ export default {
       // console.log("datos al get TT desde tags: "+"sub"+this.sub+"opt: "+this.opt+" fav: "+this.fav);
       // this.getTopics(this.sub, this.opt, this.fav, this.tagList);
     },
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown;
+    },
+    getDetailsFlashcard(cardId) {
+            this.propToPass="Ver detalles";
+            this.cardId=cardId;
+            console.log("propToPass en HomePage: " + this.propToPass);
+            this.$refs.flashcardForm.mostrarModal();
+            
+        },
+    editPersonalFlashcard(cardId) {
+            this.propToPass="Editar";
+            this.cardId=cardId;
+            this.topicRootId=this.topicId;
+            console.log("propToPass en HomePage: " + this.propToPass);
+            this.$refs.flashcardForm.mostrarModal();
+        },
+    async   createPersonalFlashcard() {
+            this.propToPass="Crear";
+            this.topicRootId=this.topicId;
+            console.log("propToPass en HomePage: " + this.propToPass);
+            this.$refs.flashcardForm.mostrarModal();
+            await this.getFlashcards();
+        },
     viewStudyMode(topicId) {
       // Redirige a la página de studymode
       this.$router.push({ name: 'ViewStudyMode', //aqui
       params: { topicId: topicId } });
     },
+    async deleteFlashcard(cardId){
+            try{
+            console.log("deleteFlashcard");
+            this.user = await this.$auth0.user;
+            this.sub = await this.user.sub;
+            const data = await this.flashcardsService.deleteFlashcard(cardId, this.sub);
+                console.log("deleteFlashcard Flashcard "+data.responseCode);
+                if(data.responseCode==="F-004"){
+                    console.log("Flashcard eliminada");
+                    this.question='';
+                    this.answer='';
+                    await this.getFlashcards();
+                }
+            }catch(error){
+                console.log(error);
+            }
+        },
+        async createFlashcardIA(){
+            try{
+                console.log("createFlashcardIA");
+                this.user = await this.$auth0.user;
+                this.sub = await this.user.sub;
+                const data = await this.flashcardsService.createFlashcardIA(this.topicId, this.sub);
+                    console.log("post Flashcard "+data.responseCode);
+                    if(data.responseCode=="F-001"){
+                        alert("Flashcard creada");
+                        this.closeModal();
+                        await this.getFlashcards();
+                    }
+                  
+            }catch(error){
+                console.log(error);
+            }
+          
+        },
+        
   },
 };
 </script>
