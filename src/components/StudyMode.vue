@@ -1,19 +1,18 @@
 <template>
     <div class="container mt-3">
         <div class="d-flex justify-content-between">
-            <h1><i class="fas bi bi-box-arrow-left fa-1x me-2 icon-grey" @click="viewStudyMode(topicId)"></i>Study mode</h1>
+            <h2><i class="fas bi bi-box-arrow-left fa-1x me-2 icon-grey" @click="viewStudyMode(topicId)"></i>Study mode</h2>
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                 <div>
                     <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" v-model="mode" value="study">
                     <label class="btn btn-outline-purple rounded" for="btnradio1">Modo Estudio</label>
                 </div>
-                <div v-if="typeTopic !== 'misFavoritos'">
+                <div>
                     <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" v-model="mode" value="test" @change="applyFilter">
                     <label class="btn btn-outline-purple rounded" for="btnradio2">Modo Test</label>
                 </div>
                 </div>
         </div>
-        <br>
         <div class="card mt-3">
         <div class="card-body">
         <div class="row">
@@ -21,18 +20,21 @@
             <div class="col-md-9">
                 <div class="card border-right-plomo">
                     <div class="card-body d-flex justify-content-center align-items-center">
-                        <div class="card flashcard" onclick="this.querySelector('.card-content').classList.toggle('flip')">
-                            <div class="card card-content">
+                        <i class="fas fa-arrow-left" @click="previousFlashcard"></i> <!-- Flecha izquierda -->
+                        <div v-for="(flashcard, index) in flashcards" :key="flashcard.id" v-show="index === currentFlashcardIndex" class="flashcard" @click="flipCard">
+                            <div class="card card-content" :class="{ flip: isFlipped }">
                                 <div class="card card-front">
-                                <h3>Front</h3>
-                                <p>This is the front of the flashcard.</p>
+                                    <h3>{{ flashcard.front }}</h3>
+                                    <!-- <p>{{ flashcard.front }}</p> -->
                                 </div>
                                 <div class="card-back">
-                                <h3>Back</h3>
-                                <p>This is the back of the flashcard.</p>
+                                    <!-- <h3>{{ flashcard.back }}</h3> -->
+                                    <p>{{ flashcard.back }}</p>
                                 </div>
                             </div>
                             </div>
+                            <i class="fas fa-arrow-right" @click="nextFlashcard"></i> <!-- Flecha derecha -->
+                            
                     </div>
                     </div>
 
@@ -41,30 +43,9 @@
             <div class="col-md-3">
                 <div class="card overflow-auto" style="height: 460px;">
                     <ul class="list-group">
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
-                        <li class="list-group-item">Item One</li>
-                        <li class="list-group-item">Item Two</li>
+                        <li v-for="(flashcard, index) in flashcards" :key="flashcard.cardId" class="list-group-item" @click="setCurrentFlashcard(index)">
+                            Pregunta #{{ index + 1 }}:{{ flashcard.front.substring(0, 15) + '...'}}
+                        </li>
                         <!-- Más ítems -->
                     </ul>
                 </div>
@@ -94,6 +75,7 @@
       return {
         mode: 'study',
         isFlipped: false,
+        currentFlashcardIndex: 0, // Indice actual de la flashcard
         // Datos de ejemplo para las flashcards
         // flashcards: [
         //   { title: 'Card#: Nombre card 1', description: 'Descripción aquí 1' },
@@ -133,6 +115,22 @@
       },
       flipCard() {
         this.isFlipped = !this.isFlipped;
+        },
+        nextFlashcard() {
+            if (this.currentFlashcardIndex < this.flashcards.length - 1) {
+                this.currentFlashcardIndex++;
+                this.isFlipped = false; // Opcional: Resetear el estado de flip al cambiar de tarjeta
+            }
+        },
+        previousFlashcard() {
+            if (this.currentFlashcardIndex > 0) {
+                this.currentFlashcardIndex--;
+                this.isFlipped = false; // Opcional: Resetear el estado de flip al cambiar de tarjeta
+            }
+        },
+        setCurrentFlashcard(index) {
+            this.currentFlashcardIndex = index;
+            this.isFlipped = false; // Opcional: Resetear el estado de flip al seleccionar una nueva pregunta
         },
       receiveDataFromChild(data) {//TODO: mandar al getTopics
         console.log('Datos recibidos del hijo viewCards:', JSON.stringify(data));
@@ -235,6 +233,11 @@ color: #90989b /*#2A5AA3; /* Color azul de Bootstrap para íconos */
   border-left: none;
   height: 460px; /* Si quieres que la altura sea parte de la clase */
 }
+.fa-arrow-left, .fa-arrow-right {
+        font-size: 24px; /* Tamaño de la flecha */
+        margin: 0 20px; /* Espacio alrededor de las flechas */
+        cursor: pointer; /* Cursor como indicador de clic */
+    }
 
   body {
     background-color: #f8fafc ; /* Un tono azulado/gris claro */
